@@ -32,10 +32,19 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
     const handleSaveProduct = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            const payload = {
+                name: formData.name,
+                description: formData.description,
+                price: Number(formData.price),
+                categoryId: formData.category, // Map category ID to categoryId for backend
+                image: formData.image,
+                badge: formData.badge
+            };
+
             if (editingProduct) {
-                await api.products.update(editingProduct.id, formData);
+                await api.products.update(editingProduct.id, { ...payload, id: editingProduct.id });
             } else {
-                await api.products.create(formData);
+                await api.products.create(payload);
             }
             onRefresh();
             setIsModalOpen(false);

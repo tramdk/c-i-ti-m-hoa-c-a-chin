@@ -25,10 +25,16 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ categories, pr
     const handleSaveCategory = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
+            const payload = {
+                name: catFormData.name,
+                description: catFormData.description,
+                image: catFormData.image
+            };
+
             if (editingCategory) {
-                await api.productCategories.update(editingCategory.id, catFormData);
+                await api.productCategories.update(editingCategory.id, { ...payload, id: editingCategory.id });
             } else {
-                await api.productCategories.create(catFormData);
+                await api.productCategories.create(payload);
             }
             onRefresh();
             setIsCatModalOpen(false);
