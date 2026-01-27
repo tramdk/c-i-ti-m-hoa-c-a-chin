@@ -19,9 +19,15 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
         name: '', category: 'hoa', price: 0, image: '', description: '', badge: ''
     });
 
-    const filteredProducts = products.filter(p =>
-        p.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const [selectedCategory, setSelectedCategory] = useState<string | number>('all');
+    const [isIdVisible, setIsIdVisible] = useState(false);
+
+    const filteredProducts = products.filter(p => {
+        const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            String(p.id).toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = selectedCategory === 'all' || String(p.category) === String(selectedCategory);
+        return matchesSearch && matchesCategory;
+    });
 
     const handleSaveProduct = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -66,15 +72,27 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
         <>
             <div className="bg-white rounded-[2.5rem] shadow-sm border border-stone-100 overflow-hidden">
                 <div className="p-5 md:p-8 border-b border-stone-100 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
-                    <div className="relative w-full md:w-96">
-                        <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-stone-300" size={18} />
-                        <input
-                            type="text"
-                            placeholder="Tìm tên sản phẩm..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-14 pr-6 py-4 bg-stone-100 border-none rounded-xl md:rounded-2xl focus:ring-2 focus:ring-floral-rose/20 transition-all text-sm outline-none"
-                        />
+                    <div className="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto flex-1">
+                        <div className="relative w-full md:w-96">
+                            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-stone-300" size={18} />
+                            <input
+                                type="text"
+                                placeholder="Tìm theo tên hoặc ID..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-14 pr-6 py-4 bg-stone-100 border-none rounded-xl md:rounded-2xl focus:ring-2 focus:ring-floral-rose/20 transition-all text-sm outline-none"
+                            />
+                        </div>
+                        <select
+                            value={String(selectedCategory)}
+                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            className="w-full md:w-48 px-6 py-4 bg-stone-100 border-none rounded-xl md:rounded-2xl focus:ring-2 focus:ring-floral-rose/20 transition-all text-sm outline-none appearance-none cursor-pointer text-stone-600 font-bold"
+                        >
+                            <option value="all">Tất cả danh mục</option>
+                            {categories.map(cat => (
+                                <option key={cat.id} value={cat.id}>{cat.name}</option>
+                            ))}
+                        </select>
                     </div>
                     <button
                         onClick={openAddModal}

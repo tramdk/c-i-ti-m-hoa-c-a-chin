@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Plus, X, ShoppingBag, Star, Clock, Truck, Loader2, RefreshCcw, Info } from 'lucide-react';
+import { Heart, Plus, X, ShoppingBag, Star, Clock, Truck, Loader2, RefreshCcw, Info, Search } from 'lucide-react';
 import { ENDPOINTS } from '../constants';
 import { FileHandler } from './FileHandler';
 import { api } from '@/backend';
@@ -84,6 +84,7 @@ export const ProductSection: React.FC = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
+  const [searchTerm, setSearchTerm] = useState<string>('');
   const [flyingObject, setFlyingObject] = useState<string | null>(null);
 
   const { addToCart } = useCart();
@@ -128,7 +129,12 @@ export const ProductSection: React.FC = () => {
     }
   };
 
-  const filteredProducts = filter === 'all' ? displayProducts : displayProducts.filter(p => p.category === filter);
+  const filteredProducts = displayProducts.filter(p => {
+    const matchesCategory = filter === 'all' || String(p.category) === String(filter);
+    const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <div className="container mx-auto px-6">
@@ -157,16 +163,28 @@ export const ProductSection: React.FC = () => {
           </div>
         </div>
 
-        <div className="flex bg-white rounded-full p-2 shadow-sm border border-stone-100 overflow-hidden overflow-x-auto max-w-full">
-          {categories.map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setFilter(cat.id)}
-              className={`px-6 md:px-8 py-3 rounded-full text-xs md:text-sm font-bold tracking-widest uppercase transition-all whitespace-nowrap ${filter === cat.id ? 'bg-floral-rose text-white shadow-md' : 'text-stone-400 hover:text-floral-rose'}`}
-            >
-              {cat.name}
-            </button>
-          ))}
+        <div className="flex flex-col gap-6 w-full md:w-auto">
+          <div className="relative group w-full md:w-80">
+            <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-stone-300 group-focus-within:text-floral-rose transition-colors" size={20} />
+            <input
+              type="text"
+              placeholder="Tìm sản phẩm..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-14 pr-6 py-4 bg-white border border-stone-100 rounded-full shadow-sm outline-none focus:ring-4 focus:ring-floral-rose/5 focus:border-floral-rose/20 transition-all text-sm font-medium"
+            />
+          </div>
+          <div className="flex bg-white rounded-full p-2 shadow-sm border border-stone-100 overflow-hidden overflow-x-auto max-w-full no-scrollbar">
+            {categories.map((cat) => (
+              <button
+                key={cat.id}
+                onClick={() => setFilter(cat.id)}
+                className={`px-6 md:px-8 py-3 rounded-full text-xs md:text-sm font-bold tracking-widest uppercase transition-all whitespace-nowrap ${filter === cat.id ? 'bg-floral-rose text-white shadow-md' : 'text-stone-400 hover:text-floral-rose'}`}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -197,42 +215,43 @@ export const ProductSection: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                whileHover={{ y: -8 }}
+                whileHover={{ y: -5, scale: 1.01 }}
                 key={product.id}
-                className="group cursor-pointer flex flex-col bg-white md:bg-transparent rounded-[1.5rem] md:rounded-none border border-stone-100 md:border-none shadow-sm md:shadow-none overflow-hidden"
+                className="group cursor-pointer flex flex-col bg-white md:bg-transparent rounded-[1.5rem] md:rounded-none border border-stone-100 md:border-none shadow-sm md:shadow-none overflow-hidden transition-all duration-500 hover:z-10"
                 onClick={() => setSelectedProduct(product)}
               >
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-white mb-3 md:mb-8 shadow-sm group-hover:shadow-2xl transition-all duration-500">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-white mb-3 md:mb-8 shadow-sm group-hover:shadow-[0_20px_50px_rgba(180,140,110,0.15)] transition-all duration-700">
                   <FileHandler
                     objectId={product.id}
                     objectType="product"
                     viewOnly={true}
                     fallbackImage={product.image}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-out"
                   />
-                  <div className="absolute top-2 left-2 md:top-6 md:left-6">
+                  <div className="absolute inset-0 bg-floral-deep/0 group-hover:bg-floral-deep/5 transition-colors duration-500" />
+                  <div className="absolute top-2 left-2 md:top-6 md:left-6 z-20">
                     {product.badge && (
                       <span className="px-2 py-0.5 md:px-5 md:py-2 bg-floral-rose/90 backdrop-blur-sm text-white text-[7px] md:text-[12px] font-bold tracking-widest uppercase rounded-full shadow-lg">
                         {product.badge}
                       </span>
                     )}
                   </div>
-                  <div className="hidden md:block absolute inset-x-0 bottom-0 p-8 translate-y-full group-hover:translate-y-0 transition-all duration-500">
+                  <div className="hidden md:block absolute inset-x-0 bottom-0 p-8 translate-y-full group-hover:translate-y-0 transition-all duration-700 ease-out z-20">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAddToCart(product);
                       }}
-                      className="w-full py-5 bg-white text-floral-deep rounded-2xl font-bold text-xs tracking-[0.2em] uppercase flex items-center justify-center gap-3 shadow-2xl hover:bg-floral-rose hover:text-white transition-all group/btn"
+                      className="w-full py-5 bg-white/95 backdrop-blur-sm text-floral-deep rounded-2xl font-bold text-xs tracking-[0.2em] uppercase flex items-center justify-center gap-3 shadow-xl hover:bg-floral-rose hover:text-white transition-all duration-300 group/btn"
                     >
                       <ShoppingBag size={16} className="text-floral-rose group-hover/btn:text-white transition-colors" /> THÊM VÀO GIỎ
                     </button>
                   </div>
                 </div>
-                <div className="p-3 md:p-0 md:px-4 text-center">
-                  <h3 className="font-serif text-sm md:text-2xl text-floral-deep mb-1 md:mb-2 truncate md:whitespace-normal line-clamp-1">{product.name}</h3>
-                  <div className="hidden md:block w-12 h-0.5 bg-floral-rose/20 mx-auto mb-3" />
-                  <p className="text-floral-rose font-bold text-sm md:text-xl">{product.price.toLocaleString()}đ</p>
+                <div className="p-3 md:p-0 md:px-4 text-center z-20">
+                  <h3 className="font-serif text-sm md:text-2xl text-floral-deep mb-1 md:mb-2 truncate md:whitespace-normal line-clamp-1 group-hover:text-floral-rose transition-colors duration-500">{product.name}</h3>
+                  <div className="hidden md:block w-12 h-0.5 bg-floral-rose/20 mx-auto mb-3 transform origin-center group-hover:scale-x-150 group-hover:bg-floral-rose transition-all duration-500" />
+                  <p className="text-floral-rose font-bold text-sm md:text-xl transform group-hover:scale-110 transition-transform duration-500">{product.price.toLocaleString()}đ</p>
 
                   <button
                     onClick={(e) => {
