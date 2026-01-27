@@ -67,7 +67,7 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ categories, pr
     return (
         <>
             <div className="space-y-8">
-                <div className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="bg-white p-5 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-sm border border-stone-100 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
                     <div className="relative w-full md:w-96">
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-stone-300" size={18} />
                         <input
@@ -75,20 +75,20 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ categories, pr
                             placeholder="Tìm danh mục..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-14 pr-6 py-4 bg-stone-100 border-none rounded-2xl focus:ring-2 focus:ring-floral-rose/20 transition-all text-sm outline-none"
+                            className="w-full pl-14 pr-6 py-4 bg-stone-100 border-none rounded-xl md:rounded-2xl focus:ring-2 focus:ring-floral-rose/20 transition-all text-sm outline-none"
                         />
                     </div>
                     <button
                         onClick={openAddModal}
-                        className="px-8 py-4 bg-floral-rose text-white rounded-2xl font-bold text-sm tracking-widest uppercase flex items-center gap-3 hover:bg-floral-deep transition-all shadow-xl shadow-floral-rose/20"
+                        className="w-full md:w-auto px-8 py-4 bg-floral-rose text-white rounded-xl md:rounded-2xl font-bold text-xs md:text-sm tracking-widest uppercase flex items-center justify-center gap-3 hover:bg-floral-deep transition-all shadow-xl shadow-floral-rose/20"
                     >
                         <Plus size={20} /> THÊM DANH MỤC
                     </button>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {filteredCategories.map((cat) => (
-                        <div key={cat.id} className="bg-white p-8 rounded-[2.5rem] shadow-sm border border-stone-100 relative group overflow-hidden">
-                            <div className="flex gap-6 items-start mb-6">
+                        <div key={cat.id} className="bg-white p-6 md:p-8 rounded-[2rem] md:rounded-[2.5rem] shadow-sm border border-stone-100 relative group overflow-hidden transition-all hover:shadow-lg">
+                            <div className="flex gap-4 md:gap-6 items-start mb-6">
                                 <div className="w-20 h-20 shrink-0 bg-stone-100 rounded-2xl overflow-hidden border border-stone-100">
                                     <FileHandler objectId={cat.id} objectType="product" viewOnly={true} className="w-full h-full" fallbackImage={cat.image} />
                                 </div>

@@ -114,8 +114,8 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
                                     <td className="px-8 py-6 font-mono text-sm font-bold text-floral-rose">
                                         {product.price.toLocaleString()}đ
                                     </td>
-                                    <td className="px-8 py-6 text-right">
-                                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <td className="px-5 md:px-8 py-4 md:py-6 text-right">
+                                        <div className="flex justify-end gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
                                             <button onClick={() => openEditModal(product)} className="p-3 bg-white text-stone-400 hover:text-floral-gold rounded-xl shadow-sm border border-stone-100"><Edit2 size={16} /></button>
                                             <button onClick={() => handleDeleteProduct(product.id)} className="p-3 bg-white text-stone-400 hover:text-red-500 rounded-xl shadow-sm border border-stone-100"><Trash2 size={16} /></button>
                                         </div>
