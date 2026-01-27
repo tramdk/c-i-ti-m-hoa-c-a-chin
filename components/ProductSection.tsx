@@ -130,7 +130,7 @@ export const ProductSection: React.FC = () => {
   };
 
   const filteredProducts = displayProducts.filter(p => {
-    const matchesCategory = filter === 'all' || String(p.category) === String(filter);
+    const matchesCategory = filter === 'all' || String(p.categoryId) === String(filter);
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       p.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
