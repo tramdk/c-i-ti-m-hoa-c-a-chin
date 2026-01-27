@@ -126,26 +126,24 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
                     </table>
                 </div>
 
-                <div className="md:hidden divide-y divide-stone-100">
+                <div className="md:hidden grid grid-cols-2 gap-3 p-3 bg-stone-50/50">
                     {filteredProducts.map((product) => (
-                        <div key={product.id} className="p-5 flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-4 min-w-0">
-                                <div className="w-14 h-14 shrink-0 bg-stone-100 rounded-xl overflow-hidden border border-stone-100">
-                                    <FileHandler objectId={product.id} objectType="product" viewOnly={true} className="w-full h-full" fallbackImage={product.image} />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="font-bold text-floral-deep text-sm mb-1 truncate">{product.name}</p>
-                                    <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest leading-none mb-2">
-                                        {categories.find(c => c.id === product.category)?.name || product.category}
-                                    </p>
-                                    <p className="text-floral-rose font-bold text-sm leading-none">
-                                        {product.price.toLocaleString()}đ
-                                    </p>
-                                </div>
+                        <div key={product.id} className="bg-white p-3 rounded-2xl border border-stone-100 shadow-sm flex flex-col h-full">
+                            <div className="relative aspect-square w-full mb-3 bg-stone-100 rounded-xl overflow-hidden border border-stone-100">
+                                <FileHandler objectId={product.id} objectType="product" viewOnly={true} className="w-full h-full" fallbackImage={product.image} />
                             </div>
-                            <div className="flex gap-2">
-                                <button onClick={() => openEditModal(product)} className="p-2.5 bg-stone-50 text-stone-400 rounded-lg active:bg-floral-gold active:text-white transition-colors"><Edit2 size={14} /></button>
-                                <button onClick={() => handleDeleteProduct(product.id)} className="p-2.5 bg-stone-50 text-stone-400 rounded-lg active:bg-red-500 active:text-white transition-colors"><Trash2 size={14} /></button>
+                            <div className="flex-grow min-w-0">
+                                <p className="font-bold text-floral-deep text-xs mb-1 line-clamp-2 h-8 leading-tight">{product.name}</p>
+                                <p className="text-[9px] text-stone-400 font-bold uppercase tracking-widest leading-none mb-2">
+                                    {categories.find(c => c.id === product.category)?.name || product.category}
+                                </p>
+                                <p className="text-floral-rose font-bold text-xs">
+                                    {product.price.toLocaleString()}đ
+                                </p>
+                            </div>
+                            <div className="flex gap-2 mt-3 pt-3 border-t border-stone-50">
+                                <button onClick={() => openEditModal(product)} className="flex-1 py-2 bg-stone-50 text-stone-400 rounded-lg flex items-center justify-center active:bg-floral-gold active:text-white transition-colors"><Edit2 size={14} /></button>
+                                <button onClick={() => handleDeleteProduct(product.id)} className="flex-1 py-2 bg-stone-50 text-stone-400 rounded-lg flex items-center justify-center active:bg-red-500 active:text-white transition-colors"><Trash2 size={14} /></button>
                             </div>
                         </div>
                     ))}

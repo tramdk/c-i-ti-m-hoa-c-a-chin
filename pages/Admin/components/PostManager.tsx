@@ -141,26 +141,24 @@ export const PostManager: React.FC<PostManagerProps> = ({ posts, postCategories,
                     </table>
                 </div>
 
-                <div className="md:hidden divide-y divide-stone-100">
+                <div className="md:hidden grid grid-cols-2 gap-3 p-3 bg-stone-50/50">
                     {filteredPosts.map((post) => (
-                        <div key={post.id} className="p-5 flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-4 min-w-0">
-                                <div className="w-14 h-14 shrink-0 bg-stone-100 rounded-xl overflow-hidden border border-stone-100">
-                                    <FileHandler objectId={post.id} objectType="post" viewOnly={true} className="w-full h-full" fallbackImage={post.image} />
-                                </div>
-                                <div className="min-w-0">
-                                    <p className="font-bold text-floral-deep text-sm mb-1 truncate">{post.title}</p>
-                                    <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest leading-none mb-2">
-                                        {postCategories.find(c => c.id === post.categoryId)?.name || post.category}
-                                    </p>
-                                    <p className="text-stone-300 text-[10px] leading-none">
-                                        {post.date}
-                                    </p>
-                                </div>
+                        <div key={post.id} className="bg-white p-3 rounded-2xl border border-stone-100 shadow-sm flex flex-col h-full">
+                            <div className="relative aspect-video w-full mb-3 bg-stone-100 rounded-xl overflow-hidden border border-stone-100">
+                                <FileHandler objectId={post.id} objectType="post" viewOnly={true} className="w-full h-full" fallbackImage={post.image} />
                             </div>
-                            <div className="flex gap-2">
-                                <button onClick={() => openEditModal(post)} className="p-2.5 bg-stone-50 text-stone-400 rounded-lg active:bg-floral-gold active:text-white transition-colors"><Edit2 size={14} /></button>
-                                <button onClick={() => handleDeletePost(post.id)} className="p-2.5 bg-stone-50 text-stone-400 rounded-lg active:bg-red-500 active:text-white transition-colors"><Trash2 size={14} /></button>
+                            <div className="flex-grow min-w-0">
+                                <p className="font-bold text-floral-deep text-xs mb-1 line-clamp-2 h-8 leading-tight">{post.title}</p>
+                                <p className="text-[9px] text-stone-400 font-bold uppercase tracking-widest leading-none mb-2">
+                                    {postCategories.find(c => c.id === post.categoryId)?.name || post.category}
+                                </p>
+                                <p className="text-stone-300 text-[9px]">
+                                    {post.date}
+                                </p>
+                            </div>
+                            <div className="flex gap-2 mt-3 pt-3 border-t border-stone-50">
+                                <button onClick={() => openEditModal(post)} className="flex-1 py-2 bg-stone-50 text-stone-400 rounded-lg flex items-center justify-center active:bg-floral-gold active:text-white transition-colors"><Edit2 size={14} /></button>
+                                <button onClick={() => handleDeletePost(post.id)} className="flex-1 py-2 bg-stone-50 text-stone-400 rounded-lg flex items-center justify-center active:bg-red-500 active:text-white transition-colors"><Trash2 size={14} /></button>
                             </div>
                         </div>
                     ))}

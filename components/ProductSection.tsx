@@ -189,7 +189,7 @@ export const ProductSection: React.FC = () => {
           <p className="font-serif text-2xl italic">Đang tải bộ sưu tập...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 md:gap-12">
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 md:gap-12 px-2 md:px-0">
           <AnimatePresence mode='popLayout'>
             {filteredProducts.map((product) => (
               <motion.div
@@ -199,20 +199,20 @@ export const ProductSection: React.FC = () => {
                 exit={{ opacity: 0, scale: 0.9 }}
                 whileHover={{ y: -8 }}
                 key={product.id}
-                className="group cursor-pointer flex md:flex-col bg-white md:bg-transparent p-3 md:p-0 rounded-[2rem] md:rounded-none border border-stone-100 md:border-none shadow-sm md:shadow-none items-center md:items-stretch gap-5 md:gap-0"
+                className="group cursor-pointer flex flex-col bg-white md:bg-transparent rounded-[1.5rem] md:rounded-none border border-stone-100 md:border-none shadow-sm md:shadow-none overflow-hidden"
                 onClick={() => setSelectedProduct(product)}
               >
-                <div className="relative w-28 h-28 md:w-full md:aspect-[4/5] shrink-0 rounded-[1.5rem] md:rounded-[2.5rem] overflow-hidden bg-white md:mb-8 shadow-sm group-hover:shadow-2xl transition-all duration-500 border border-stone-50">
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-white mb-3 md:mb-8 shadow-sm group-hover:shadow-2xl transition-all duration-500">
                   <FileHandler
                     objectId={product.id}
                     objectType="product"
                     viewOnly={true}
                     fallbackImage={product.image}
-                    className="w-full h-full group-hover:scale-105 transition-transform duration-1000"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
                   />
-                  <div className="absolute top-3 left-3 md:top-6 md:left-6">
+                  <div className="absolute top-2 left-2 md:top-6 md:left-6">
                     {product.badge && (
-                      <span className="px-3 py-1 md:px-5 md:py-2 bg-floral-rose/90 backdrop-blur-sm text-white text-[8px] md:text-[12px] font-bold tracking-widest uppercase rounded-full shadow-lg" style={{ fontSize: 'clamp(8px, 2vw, 12px)' }}>
+                      <span className="px-2 py-0.5 md:px-5 md:py-2 bg-floral-rose/90 backdrop-blur-sm text-white text-[7px] md:text-[12px] font-bold tracking-widest uppercase rounded-full shadow-lg">
                         {product.badge}
                       </span>
                     )}
@@ -229,19 +229,19 @@ export const ProductSection: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <div className="flex-grow min-w-0 md:px-4 text-left md:text-center">
-                  <h3 className="font-serif text-lg md:text-2xl text-floral-deep mb-1 md:mb-2 truncate md:whitespace-normal">{product.name}</h3>
+                <div className="p-3 md:p-0 md:px-4 text-center">
+                  <h3 className="font-serif text-sm md:text-2xl text-floral-deep mb-1 md:mb-2 truncate md:whitespace-normal line-clamp-1">{product.name}</h3>
                   <div className="hidden md:block w-12 h-0.5 bg-floral-rose/20 mx-auto mb-3" />
-                  <p className="text-floral-rose font-bold text-base md:text-xl">{product.price.toLocaleString()}đ</p>
+                  <p className="text-floral-rose font-bold text-sm md:text-xl">{product.price.toLocaleString()}đ</p>
 
                   <button
                     onClick={(e) => {
                       e.stopPropagation();
                       handleAddToCart(product);
                     }}
-                    className="md:hidden mt-3 px-5 py-2.5 bg-floral-rose text-white rounded-xl font-bold text-[10px] tracking-widest uppercase flex items-center gap-2 shadow-lg shadow-floral-rose/20 active:scale-95 transition-transform"
+                    className="md:hidden mt-2 w-full py-2 bg-floral-rose text-white rounded-lg font-bold text-[9px] tracking-widest uppercase flex items-center justify-center gap-1 shadow-md shadow-floral-rose/10 active:scale-95 transition-transform"
                   >
-                    <Plus size={14} /> THÊM
+                    <Plus size={12} /> THÊM
                   </button>
                 </div>
               </motion.div>
