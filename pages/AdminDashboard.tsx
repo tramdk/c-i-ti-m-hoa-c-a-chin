@@ -144,9 +144,31 @@ export const AdminDashboard: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 md:px-6 pb-20 min-h-screen pt-24 md:pt-32">
-      <div className="flex flex-col lg:flex-row gap-12">
-        {/* Sidebar */}
-        <aside className="lg:w-64 shrink-0">
+      <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
+        {/* Mobile Navigation Tabs */}
+        <div className="lg:hidden sticky top-[80px] z-30 bg-floral-petal/80 backdrop-blur-md py-4 -mx-4 px-4 overflow-x-auto no-scrollbar border-b border-stone-100 flex gap-2">
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs tracking-wide whitespace-nowrap transition-all ${activeTab === 'products' ? 'bg-floral-rose text-white shadow-md' : 'bg-white text-stone-400 border border-stone-100'}`}
+          >
+            <Package size={16} /> Sản phẩm ({products.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('categories')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs tracking-wide whitespace-nowrap transition-all ${activeTab === 'categories' ? 'bg-floral-rose text-white shadow-md' : 'bg-white text-stone-400 border border-stone-100'}`}
+          >
+            <Layers size={16} /> Danh mục ({categories.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('posts')}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-full font-bold text-xs tracking-wide whitespace-nowrap transition-all ${activeTab === 'posts' ? 'bg-floral-rose text-white shadow-md' : 'bg-white text-stone-400 border border-stone-100'}`}
+          >
+            <MessageSquare size={16} /> Bài viết ({posts.length})
+          </button>
+        </div>
+
+        {/* Desktop Sidebar */}
+        <aside className="hidden lg:block lg:w-64 shrink-0">
           <div className="bg-white rounded-[2rem] p-4 shadow-sm border border-stone-100 sticky top-32">
             <nav className="space-y-2">
               <button
@@ -191,17 +213,17 @@ export const AdminDashboard: React.FC = () => {
 
         {/* Main Content */}
         <main className="flex-1 min-w-0">
-          <header className="sticky top-[100px] z-40 bg-floral-petal/95 backdrop-blur-md -mx-6 px-6 py-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-6 transition-all duration-300 rounded-b-3xl">
+          <header className="md:sticky md:top-[100px] z-20 bg-floral-petal/95 backdrop-blur-md md:-mx-6 md:px-6 py-4 md:py-6 mb-6 md:mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4 md:gap-6 transition-all duration-300 rounded-b-3xl">
             <div>
-              <div className="flex items-center gap-4 mb-2">
-                <h1 className="font-serif text-5xl text-floral-deep">Quản trị Hệ thống</h1>
-                <button onClick={fetchRemoteData} className={`p-2 text-stone-300 hover:text-floral-rose ${loading ? 'animate-spin' : ''}`}>
-                  <RefreshCcw size={20} />
+              <div className="flex items-center gap-3 md:gap-4 mb-1 md:mb-2">
+                <h1 className="font-serif text-3xl md:text-5xl text-floral-deep">Quản trị Hệ thống</h1>
+                <button onClick={fetchRemoteData} className={`p-2 text-stone-300 hover:text-floral-rose transition-colors ${loading ? 'animate-spin' : ''}`}>
+                  <RefreshCcw size={18} className="md:hidden" />
+                  <RefreshCcw size={20} className="hidden md:block" />
                 </button>
               </div>
-              <p className="text-stone-400">Quản lý kho hàng và danh mục của bạn</p>
+              <p className="text-sm md:text-base text-stone-400">Quản lý kho hàng và danh mục của bạn</p>
             </div>
-            {/* The "Add New" button was moved inside individual managers for better context */}
           </header>
 
           {activeTab === 'products' ? (
