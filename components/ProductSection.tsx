@@ -7,20 +7,7 @@ import { FileHandler } from './FileHandler';
 import { api } from '@/backend';
 import { useCart } from './CartContext';
 
-interface Product {
-  id: string | number;
-  name: string;
-  category: string;
-  price: number;
-  image: string;
-  description: string;
-  badge?: string;
-}
-
-interface Category {
-  id: string;
-  name: string;
-}
+import { Product, Category } from '../types';
 
 const FlyingItem = ({ image, targetId, onComplete }: { image: string, targetId: string, onComplete: () => void }) => {
   const [targetPos, setTargetPos] = useState({ x: 0, y: 0 });
@@ -93,7 +80,7 @@ const INITIAL_CATEGORIES: Category[] = [
 export const ProductSection: React.FC = () => {
   const [displayProducts, setDisplayProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>(INITIAL_CATEGORIES);
-  const [filter, setFilter] = useState('all');
+  const [filter, setFilter] = useState<string | number>('all');
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
@@ -236,7 +223,7 @@ export const ProductSection: React.FC = () => {
                         e.stopPropagation();
                         handleAddToCart(product);
                       }}
-                      className="w-full py-5 bg-white text-floral-deep rounded-2xl font-bold [font-size:10px] tracking-widest uppercase flex items-center justify-center gap-3 shadow-2xl hover:bg-floral-rose hover:text-white transition-all group/btn"
+                      className="w-full py-4 md:py-5 bg-white text-floral-deep rounded-xl md:rounded-2xl font-bold text-[10px] md:text-xs tracking-[0.2em] uppercase flex items-center justify-center gap-3 shadow-2xl hover:bg-floral-rose hover:text-white transition-all group/btn"
                     >
                       <ShoppingBag size={16} className="text-floral-rose group-hover/btn:text-white transition-colors" /> THÊM VÀO GIỎ
                     </button>
@@ -262,9 +249,12 @@ export const ProductSection: React.FC = () => {
               initial={{ opacity: 0, scale: 0.9, y: 30 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              className="relative w-full max-w-6xl bg-white rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[750px] max-h-[92vh]"
+              className="relative w-full max-w-6xl bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[750px] max-h-[95vh] md:max-h-[92vh]"
             >
-              <button onClick={() => setSelectedProduct(null)} className="absolute top-8 right-8 z-50 w-12 h-12 bg-stone-100 rounded-full flex items-center justify-center text-stone-400 hover:bg-floral-rose hover:text-white transition-all"><X size={24} /></button>
+              <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 md:top-8 md:right-8 z-50 w-10 h-10 md:w-12 md:h-12 bg-white/80 md:bg-stone-100 backdrop-blur-sm rounded-full flex items-center justify-center text-stone-400 hover:bg-floral-rose hover:text-white shadow-sm md:shadow-none transition-all">
+                <X size={20} className="md:hidden" />
+                <X size={24} className="hidden md:block" />
+              </button>
 
               {/* Product Gallery Section */}
               <div className="w-full md:w-1/2 lg:w-[45%] bg-stone-100 flex-shrink-0">
@@ -278,23 +268,23 @@ export const ProductSection: React.FC = () => {
               </div>
 
               {/* Product Info Section */}
-              <div className="w-full md:w-1/2 lg:w-[55%] p-8 md:p-12 flex flex-col overflow-y-auto">
-                <div className="flex items-center justify-between mb-6">
-                  <span className="px-4 py-1.5 bg-stone-50 text-stone-400 rounded-full text-[12px] font-bold uppercase tracking-[0.2em] border border-stone-100">
+              <div className="w-full md:w-1/2 lg:w-[55%] p-6 md:p-12 flex flex-col overflow-y-auto">
+                <div className="flex items-center justify-between mb-4 md:mb-6">
+                  <span className="px-3 md:px-4 py-1.5 bg-stone-50 text-stone-400 rounded-full text-[10px] md:text-[12px] font-bold uppercase tracking-[0.2em] border border-stone-100">
                     {categories.find(c => c.id === selectedProduct.category)?.name || selectedProduct.category}
                   </span>
-                  <div className="flex items-center gap-1 text-floral-gold">
+                  <div className="flex items-center gap-1 text-floral-gold scale-90 md:scale-100 origin-right">
                     {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
-                    <span className="text-xs text-stone-400 font-bold ml-2">(4.9/5)</span>
+                    <span className="text-[10px] md:text-xs text-stone-400 font-bold ml-1 md:ml-2">(4.9/5)</span>
                   </div>
                 </div>
 
-                <h2 className="font-serif text-3xl lg:text-5xl text-floral-deep mb-4 uppercase tracking-tight leading-[1.1]">{selectedProduct.name}</h2>
-                <div className="flex items-center gap-6 mb-6 pb-6 border-b border-stone-100">
-                  <p className="text-floral-rose text-3xl font-bold">{selectedProduct.price.toLocaleString()}đ</p>
+                <h2 className="font-serif text-2xl lg:text-5xl text-floral-deep mb-4 uppercase tracking-tight leading-[1.2] md:leading-[1.1]">{selectedProduct.name}</h2>
+                <div className="flex items-center gap-4 md:gap-6 mb-6 pb-6 border-b border-stone-100">
+                  <p className="text-floral-rose text-2xl md:text-3xl font-bold">{selectedProduct.price.toLocaleString()}đ</p>
                   <div className="h-6 w-px bg-stone-100" />
-                  <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[11px] font-bold uppercase rounded-lg tracking-widest flex items-center gap-2">
-                    <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Sẵn có
+                  <span className="px-3 py-1 bg-emerald-50 text-emerald-600 text-[10px] md:text-[11px] font-bold uppercase rounded-lg tracking-widest flex items-center gap-2">
+                    <div className="w-1 h-1 md:w-1.5 md:h-1.5 bg-emerald-500 rounded-full animate-pulse" /> Sẵn có
                   </span>
                 </div>
 
@@ -316,15 +306,18 @@ export const ProductSection: React.FC = () => {
                   </div>
                 </div>
 
-                <div className="mt-auto flex gap-3">
+                <div className="mt-6 md:mt-auto flex gap-3">
                   <button
                     onClick={() => handleAddToCart(selectedProduct)}
-                    className="flex-grow py-5 bg-floral-deep text-white rounded-[1.2rem] font-bold uppercase tracking-widest flex items-center justify-center gap-4 shadow-xl hover:bg-stone-800 transform hover:-translate-y-1 transition-all duration-500"
+                    className="flex-grow py-4 md:py-5 bg-floral-deep text-white rounded-xl md:rounded-[1.2rem] font-bold text-[10px] md:text-sm tracking-[0.2em] uppercase flex items-center justify-center gap-3 md:gap-4 shadow-xl hover:bg-stone-800 transform md:hover:-translate-y-1 transition-all duration-500"
                   >
-                    <ShoppingBag size={20} /> THÊM VÀO GIỎ HÀNG
+                    <ShoppingBag size={18} className="md:hidden" />
+                    <ShoppingBag size={20} className="hidden md:block" />
+                    THÊM VÀO GIỎ HÀNG
                   </button>
-                  <button className="w-16 h-16 border-2 border-stone-100 rounded-[1.2rem] flex items-center justify-center text-stone-300 hover:text-floral-rose hover:border-floral-rose/20 transition-all duration-500 group">
-                    <Heart size={24} className="group-hover:fill-current" />
+                  <button className="w-14 h-14 md:w-16 md:h-16 border-2 border-stone-100 rounded-xl md:rounded-[1.2rem] flex items-center justify-center text-stone-300 hover:text-floral-rose hover:border-floral-rose/20 transition-all duration-500 group">
+                    <Heart size={20} className="md:hidden group-hover:fill-current" />
+                    <Heart size={24} className="hidden md:block group-hover:fill-current" />
                   </button>
                 </div>
               </div>

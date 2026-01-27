@@ -139,28 +139,28 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
                             <form onSubmit={handleSaveProduct} className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                                 <div className="space-y-6">
                                     <div>
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Tên sản phẩm</label>
-                                        <input required type="text" className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none focus:ring-2 focus:ring-floral-rose/20" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                                        <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Tên sản phẩm</label>
+                                        <input required type="text" className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none focus:ring-2 focus:ring-floral-rose/20 text-sm md:text-base transition-all" value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Danh mục</label>
-                                            <select className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
+                                            <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Danh mục</label>
+                                            <select className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none text-sm md:text-base appearance-none" value={formData.category} onChange={e => setFormData({ ...formData, category: e.target.value })}>
                                                 {categories.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                                             </select>
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Giá (VNĐ)</label>
-                                            <input required type="number" className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none font-mono" value={formData.price === 0 ? '' : formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} />
+                                            <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Giá (VNĐ)</label>
+                                            <input required type="number" className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none font-mono text-sm md:text-base" value={formData.price === 0 ? '' : formData.price} onChange={e => setFormData({ ...formData, price: Number(e.target.value) })} />
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Mô tả</label>
-                                        <textarea rows={3} className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none resize-none" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
+                                        <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Mô tả</label>
+                                        <textarea rows={3} className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none resize-none text-sm md:text-base transition-all" value={formData.description} onChange={e => setFormData({ ...formData, description: e.target.value })} />
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Nhãn (Badge)</label>
-                                        <input type="text" className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none" value={formData.badge} onChange={e => setFormData({ ...formData, badge: e.target.value })} />
+                                        <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Nhãn (Badge)</label>
+                                        <input type="text" className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none text-sm md:text-base" placeholder="Ví dụ: Bestseller, Mới..." value={formData.badge} onChange={e => setFormData({ ...formData, badge: e.target.value })} />
                                     </div>
                                 </div>
                                 <div className="space-y-6">
@@ -178,8 +178,8 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" className="col-span-full py-5 bg-floral-deep text-white rounded-2xl font-bold uppercase shadow-xl hover:bg-stone-800 transition-all flex items-center justify-center gap-3">
-                                    <Save size={20} /> LƯU THAY ĐỔI
+                                <button type="submit" className="col-span-full py-4 md:py-5 bg-floral-deep text-white rounded-xl md:rounded-2xl font-bold text-xs md:text-sm tracking-[0.2em] uppercase shadow-xl hover:bg-stone-800 transition-all flex items-center justify-center gap-3">
+                                    <Save size={18} /> LƯU THAY ĐỔI
                                 </button>
                             </form>
                         </motion.div>

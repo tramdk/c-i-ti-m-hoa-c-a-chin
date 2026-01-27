@@ -153,17 +153,17 @@ export const PostManager: React.FC<PostManagerProps> = ({ posts, postCategories,
                             <form onSubmit={handleSavePost} className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                                 <div className="space-y-6">
                                     <div>
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Tiêu đề bài viết</label>
-                                        <input required type="text" className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none focus:ring-2 focus:ring-floral-rose/20" value={postFormData.title} onChange={e => setPostFormData({ ...postFormData, title: e.target.value })} />
+                                        <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Tiêu đề bài viết</label>
+                                        <input required type="text" className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none focus:ring-2 focus:ring-floral-rose/20 text-sm md:text-base transition-all" value={postFormData.title} onChange={e => setPostFormData({ ...postFormData, title: e.target.value })} />
                                     </div>
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div>
-                                            <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Đăng bởi</label>
-                                            <input required type="text" className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none" value={postFormData.author} onChange={e => setPostFormData({ ...postFormData, author: e.target.value })} />
+                                            <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Đăng bởi</label>
+                                            <input required type="text" className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none text-sm md:text-base transition-all" value={postFormData.author} onChange={e => setPostFormData({ ...postFormData, author: e.target.value })} />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Danh mục</label>
-                                            <select className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none" value={postFormData.categoryId} onChange={e => setPostFormData({ ...postFormData, categoryId: e.target.value })}>
+                                            <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Danh mục</label>
+                                            <select className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none text-sm md:text-base appearance-none transition-all" value={postFormData.categoryId} onChange={e => setPostFormData({ ...postFormData, categoryId: e.target.value })}>
                                                 {postCategories.map(cat => (
                                                     <option key={cat.id} value={cat.id}>{cat.name}</option>
                                                 ))}
@@ -171,8 +171,8 @@ export const PostManager: React.FC<PostManagerProps> = ({ posts, postCategories,
                                         </div>
                                     </div>
                                     <div>
-                                        <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Tóm tắt</label>
-                                        <textarea rows={4} className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none resize-none" value={postFormData.excerpt} onChange={e => setPostFormData({ ...postFormData, excerpt: e.target.value })} />
+                                        <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Tóm tắt</label>
+                                        <textarea rows={3} className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none resize-none text-sm md:text-base transition-all" value={postFormData.excerpt} onChange={e => setPostFormData({ ...postFormData, excerpt: e.target.value })} />
                                     </div>
                                     <div className="h-[60vh] flex flex-col col-span-1 md:col-span-2">
                                         <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Nội dung chi tiết</label>
@@ -201,8 +201,8 @@ export const PostManager: React.FC<PostManagerProps> = ({ posts, postCategories,
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" className="col-span-full py-5 bg-floral-deep text-white rounded-2xl font-bold uppercase shadow-xl hover:bg-stone-800 transition-all flex items-center justify-center gap-3">
-                                    <Save size={20} /> LƯU BÀI VIẾT
+                                <button type="submit" className="col-span-full py-4 md:py-5 bg-floral-deep text-white rounded-xl md:rounded-2xl font-bold text-xs md:text-sm tracking-[0.2em] uppercase shadow-xl hover:bg-stone-800 transition-all flex items-center justify-center gap-3">
+                                    <Save size={18} /> LƯU BÀI VIẾT
                                 </button>
                             </form>
                         </motion.div>

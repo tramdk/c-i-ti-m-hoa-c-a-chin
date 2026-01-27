@@ -132,12 +132,12 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ categories, pr
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                                     <div className="space-y-6">
                                         <div>
-                                            <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Tên danh mục</label>
-                                            <input required autoFocus type="text" className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none focus:ring-2 focus:ring-floral-rose/20" value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value })} />
+                                            <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Tên danh mục</label>
+                                            <input required autoFocus type="text" className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none focus:ring-2 focus:ring-floral-rose/20 text-sm md:text-base transition-all" value={catFormData.name} onChange={e => setCatFormData({ ...catFormData, name: e.target.value })} />
                                         </div>
                                         <div>
-                                            <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Mô tả danh mục</label>
-                                            <textarea rows={4} className="w-full px-6 py-4 bg-stone-100 rounded-2xl border border-stone-100 outline-none resize-none" placeholder="Nhập mô tả ngắn cho danh mục..." value={catFormData.description} onChange={e => setCatFormData({ ...catFormData, description: e.target.value })} />
+                                            <label className="block text-[10px] md:text-xs font-bold uppercase tracking-[0.2em] text-stone-400 mb-2">Mô tả danh mục</label>
+                                            <textarea rows={4} className="w-full px-5 md:px-6 py-3 md:py-4 bg-stone-100 rounded-xl md:rounded-2xl border border-stone-100 outline-none resize-none text-sm md:text-base transition-all" placeholder="Nhập mô tả ngắn cho danh mục..." value={catFormData.description} onChange={e => setCatFormData({ ...catFormData, description: e.target.value })} />
                                         </div>
                                     </div>
                                     <div className="space-y-6">
@@ -154,8 +154,8 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ categories, pr
                                         </div>
                                     </div>
                                 </div>
-                                <button type="submit" className="w-full py-5 bg-floral-deep text-white rounded-2xl font-bold uppercase shadow-xl hover:bg-stone-800 transition-all flex items-center justify-center gap-3">
-                                    <Save size={20} /> LƯU DANH MỤC
+                                <button type="submit" className="w-full py-4 md:py-5 bg-floral-deep text-white rounded-xl md:rounded-2xl font-bold text-xs md:text-sm tracking-[0.2em] uppercase shadow-xl hover:bg-stone-800 transition-all flex items-center justify-center gap-3">
+                                    <Save size={18} /> LƯU DANH MỤC
                                 </button>
                             </form>
                         </motion.div>
