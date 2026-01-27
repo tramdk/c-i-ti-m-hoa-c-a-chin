@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+/* TailwindCSS v4 Theme Configuration */
+@theme {
+    --color-floral-rose: #D88C9A;
+    --color-floral-deep: #2D1B1E;
+    --color-floral-petal: #FFF5F7;
+    --color-floral-gold: #C5A059;
+    --color-floral-sage: #708D81;
+
+    --font-family-serif: "Playfair Display", serif;
+    --font-family-sans: "Inter", sans-serif;
+}
+
+/* Custom Global Styles */
+html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 80px;
+    font-size: 18px;
+}
+
+body {
+    font-family: "Inter", sans-serif;
+    background-color: #FFF5F7;
+    color: #2D1B1E;
+    line-height: 1.6;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-family: "Playfair Display", serif;
+}
+
+/* Custom Component Classes */
+@layer components {
+    .btn-primary {
+        @apply px-12 py-5 bg-floral-rose text-white rounded-full font-bold uppercase tracking-widest hover:bg-floral-deep transition-all shadow-xl;
+    }
+
+    .card-product {
+        @apply relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-white shadow-sm hover:shadow-2xl transition-all duration-500 border border-stone-50;
+    }
+}
