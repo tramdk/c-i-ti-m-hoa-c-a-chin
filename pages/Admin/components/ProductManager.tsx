@@ -65,7 +65,7 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
     return (
         <>
             <div className="bg-white rounded-[2.5rem] shadow-sm border border-stone-100 overflow-hidden">
-                <div className="p-8 border-b border-stone-100 flex flex-col md:flex-row justify-between items-center gap-6">
+                <div className="p-5 md:p-8 border-b border-stone-100 flex flex-col md:flex-row justify-between items-center gap-4 md:gap-6">
                     <div className="relative w-full md:w-96">
                         <Search className="absolute left-6 top-1/2 -translate-y-1/2 text-stone-300" size={18} />
                         <input
@@ -73,18 +73,18 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
                             placeholder="Tìm tên sản phẩm..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-14 pr-6 py-4 bg-stone-100 border-none rounded-2xl focus:ring-2 focus:ring-floral-rose/20 transition-all text-sm outline-none"
+                            className="w-full pl-14 pr-6 py-4 bg-stone-100 border-none rounded-xl md:rounded-2xl focus:ring-2 focus:ring-floral-rose/20 transition-all text-sm outline-none"
                         />
                     </div>
                     <button
                         onClick={openAddModal}
-                        className="px-8 py-4 bg-floral-rose text-white rounded-2xl font-bold text-sm tracking-widest uppercase flex items-center gap-3 hover:bg-floral-deep transition-all shadow-xl shadow-floral-rose/20"
+                        className="w-full md:w-auto px-8 py-4 bg-floral-rose text-white rounded-xl md:rounded-2xl font-bold text-xs md:text-sm tracking-widest uppercase flex items-center justify-center gap-3 hover:bg-floral-deep transition-all shadow-xl shadow-floral-rose/20"
                     >
                         <Plus size={20} /> THÊM SẢN PHẨM
                     </button>
                 </div>
 
-                <div className="overflow-x-auto">
+                <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
                             <tr className="bg-stone-200/50">
@@ -114,8 +114,8 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
                                     <td className="px-8 py-6 font-mono text-sm font-bold text-floral-rose">
                                         {product.price.toLocaleString()}đ
                                     </td>
-                                    <td className="px-5 md:px-8 py-4 md:py-6 text-right">
-                                        <div className="flex justify-end gap-2 md:opacity-0 md:group-hover:opacity-100 transition-opacity">
+                                    <td className="px-8 py-6 text-right">
+                                        <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button onClick={() => openEditModal(product)} className="p-3 bg-white text-stone-400 hover:text-floral-gold rounded-xl shadow-sm border border-stone-100"><Edit2 size={16} /></button>
                                             <button onClick={() => handleDeleteProduct(product.id)} className="p-3 bg-white text-stone-400 hover:text-red-500 rounded-xl shadow-sm border border-stone-100"><Trash2 size={16} /></button>
                                         </div>
@@ -124,6 +124,31 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
                             ))}
                         </tbody>
                     </table>
+                </div>
+
+                <div className="md:hidden divide-y divide-stone-100">
+                    {filteredProducts.map((product) => (
+                        <div key={product.id} className="p-5 flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-4 min-w-0">
+                                <div className="w-14 h-14 shrink-0 bg-stone-100 rounded-xl overflow-hidden border border-stone-100">
+                                    <FileHandler objectId={product.id} objectType="product" viewOnly={true} className="w-full h-full" fallbackImage={product.image} />
+                                </div>
+                                <div className="min-w-0">
+                                    <p className="font-bold text-floral-deep text-sm mb-1 truncate">{product.name}</p>
+                                    <p className="text-[10px] text-stone-400 font-bold uppercase tracking-widest leading-none mb-2">
+                                        {categories.find(c => c.id === product.category)?.name || product.category}
+                                    </p>
+                                    <p className="text-floral-rose font-bold text-sm leading-none">
+                                        {product.price.toLocaleString()}đ
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <button onClick={() => openEditModal(product)} className="p-2.5 bg-stone-50 text-stone-400 rounded-lg active:bg-floral-gold active:text-white transition-colors"><Edit2 size={14} /></button>
+                                <button onClick={() => handleDeleteProduct(product.id)} className="p-2.5 bg-stone-50 text-stone-400 rounded-lg active:bg-red-500 active:text-white transition-colors"><Trash2 size={14} /></button>
+                            </div>
+                        </div>
+                    ))}
                 </div>
             </div>
 
