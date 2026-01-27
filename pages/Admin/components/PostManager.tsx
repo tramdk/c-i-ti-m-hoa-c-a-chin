@@ -143,14 +143,14 @@ export const PostManager: React.FC<PostManagerProps> = ({ posts, postCategories,
 
             <AnimatePresence>
                 {isPostModalOpen && (
-                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsPostModalOpen(false)} className="absolute inset-0 bg-floral-deep/60 backdrop-blur-md" />
-                        <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-7xl bg-white rounded-[3rem] shadow-2xl overflow-hidden flex flex-col p-8 max-h-[95vh] overflow-y-auto" >
-                            <div className="flex justify-between items-center mb-8">
-                                <h3 className="font-serif text-3xl text-floral-deep">{editingPost ? 'Chỉnh sửa Bài viết' : 'Thêm Bài viết Mới'}</h3>
+                        <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-7xl bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col p-6 md:p-10 max-h-[95vh] md:max-h-[90vh] overflow-y-auto" >
+                            <div className="flex justify-between items-center mb-6 md:mb-8">
+                                <h3 className="font-serif text-2xl md:text-3xl text-floral-deep">{editingPost ? 'Chỉnh sửa Bài viết' : 'Thêm Bài viết Mới'}</h3>
                                 <button onClick={() => setIsPostModalOpen(false)} className="p-2 hover:bg-stone-100 rounded-full"><X size={24} /></button>
                             </div>
-                            <form onSubmit={handleSavePost} className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <form onSubmit={handleSavePost} className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                                 <div className="space-y-6">
                                     <div>
                                         <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Tiêu đề bài viết</label>

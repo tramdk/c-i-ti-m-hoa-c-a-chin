@@ -379,14 +379,14 @@ const AppContent: React.FC = () => {
       {/* Login Prompt Modal */}
       <AnimatePresence>
         {loginPromptOpen && (
-          <div className="fixed inset-0 z-[200] flex items-center justify-center p-6">
+          <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 md:p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setLoginPromptOpen(false)} className="absolute inset-0 bg-floral-deep/60 backdrop-blur-md" />
-            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative w-full max-w-sm bg-white rounded-[2.5rem] p-10 text-center shadow-2xl">
-              <div className="w-20 h-20 bg-floral-rose/10 text-floral-rose rounded-full flex items-center justify-center mx-auto mb-6">
-                <AlertCircle size={40} />
+            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.9 }} className="relative w-full max-w-sm bg-white rounded-[2rem] md:rounded-[2.5rem] p-8 md:p-10 text-center shadow-2xl">
+              <div className="w-16 h-16 md:w-20 md:h-20 bg-floral-rose/10 text-floral-rose rounded-full flex items-center justify-center mx-auto mb-6">
+                <AlertCircle size={32} />
               </div>
-              <h3 className="font-serif text-2xl text-floral-deep mb-4 uppercase">Đăng nhập để tiếp tục</h3>
-              <p className="text-stone-500 mb-10 leading-relaxed text-sm">Bạn cần đăng nhập tài khoản thành viên để thực hiện thêm sản phẩm vào giỏ hàng.</p>
+              <h3 className="font-serif text-xl md:text-2xl text-floral-deep mb-4 uppercase">Đăng nhập để tiếp tục</h3>
+              <p className="text-stone-500 mb-8 md:mb-10 leading-relaxed text-sm">Bạn cần đăng nhập tài khoản thành viên để thực hiện thêm sản phẩm vào giỏ hàng.</p>
               <div className="flex flex-col gap-3">
                 <button
                   onClick={() => {
@@ -394,7 +394,7 @@ const AppContent: React.FC = () => {
                     setPendingCartAction(true);
                     setAuthModalOpen(true);
                   }}
-                  className="w-full py-4 bg-floral-rose text-white rounded-2xl font-bold uppercase tracking-widest shadow-lg hover:bg-floral-deep transition-all"
+                  className="w-full py-4 bg-floral-rose text-white rounded-2xl font-bold uppercase tracking-widest shadow-lg hover:bg-floral-deep transition-all text-xs md:text-sm"
                 >
                   ĐĂNG NHẬP NGAY
                 </button>
@@ -403,7 +403,7 @@ const AppContent: React.FC = () => {
                     setLoginPromptOpen(false);
                     setPendingCartAction(false);
                   }}
-                  className="w-full py-4 text-stone-400 font-bold uppercase tracking-widest text-xs hover:text-floral-rose transition-colors"
+                  className="w-full py-4 text-stone-400 font-bold uppercase tracking-widest text-[10px] md:text-xs hover:text-floral-rose transition-colors"
                 >
                   HỦY BỎ
                 </button>
@@ -415,27 +415,26 @@ const AppContent: React.FC = () => {
 
       <AnimatePresence>
         {authModalOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 md:p-6">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => { setAuthModalOpen(false); setPendingCartAction(false); }} className="absolute inset-0 bg-floral-deep/60 backdrop-blur-md" />
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden p-10" >
-              <div className="text-center mb-10">
-                <div className="w-16 h-16 bg-floral-rose/10 text-floral-rose rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Lock size={32} />
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-md bg-white rounded-[2rem] shadow-2xl overflow-hidden p-8 md:p-10" >
+              <div className="text-center mb-8 md:mb-10">
+                <div className="w-14 h-14 md:w-16 md:h-16 bg-floral-rose/10 text-floral-rose rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Lock size={28} />
                 </div>
-                <h3 className="font-serif text-3xl text-floral-deep mb-2">Đăng nhập</h3>
-                <p className="text-stone-500">Truy cập tài khoản quản trị của bạn</p>
-                {/* <div className="mt-4 p-3 bg-stone-50 rounded-xl text-xs text-stone-400 italic">Demo Admin: admin@chinchin.com</div> */}
+                <h3 className="font-serif text-2xl md:text-3xl text-floral-deep mb-2">Đăng nhập</h3>
+                <p className="text-stone-500 text-sm">Truy cập tài khoản quản trị của bạn</p>
               </div>
               {authError && <div className="p-4 bg-red-50 text-red-500 text-sm rounded-2xl border border-red-100 mb-6">{authError}</div>}
-              <form onSubmit={handleLogin} className="space-y-6">
-                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-floral-rose/20 outline-none" />
-                <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mật khẩu" className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-floral-rose/20 outline-none" />
-                <button type="submit" disabled={authLoading} className="w-full py-5 bg-floral-deep text-white rounded-2xl font-bold uppercase transition-all flex items-center justify-center gap-3">
-                  {authLoading && <Loader2 className="animate-spin" size={20} />}
+              <form onSubmit={handleLogin} className="space-y-4 md:space-y-6">
+                <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-floral-rose/20 outline-none text-sm" />
+                <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mật khẩu" className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-floral-rose/20 outline-none text-sm" />
+                <button type="submit" disabled={authLoading} className="w-full py-4 md:py-5 bg-floral-deep text-white rounded-2xl font-bold uppercase transition-all flex items-center justify-center gap-3 text-sm">
+                  {authLoading && <Loader2 className="animate-spin" size={18} />}
                   {authLoading ? 'ĐANG XỬ LÝ...' : 'TIẾP TỤC'}
                 </button>
               </form>
-              <button onClick={() => { setAuthModalOpen(false); setPendingCartAction(false); }} className="mt-6 w-full text-stone-400 text-sm hover:text-floral-rose transition-colors">Hủy bỏ</button>
+              <button onClick={() => { setAuthModalOpen(false); setPendingCartAction(false); }} className="mt-6 w-full text-stone-400 text-xs md:text-sm hover:text-floral-rose transition-colors">Hủy bỏ</button>
             </motion.div>
           </div>
         )}

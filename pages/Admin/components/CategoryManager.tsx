@@ -121,15 +121,15 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ categories, pr
 
             <AnimatePresence>
                 {isCatModalOpen && (
-                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-6">
+                    <div className="fixed inset-0 z-[110] flex items-center justify-center p-4 md:p-6">
                         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setIsCatModalOpen(false)} className="absolute inset-0 bg-floral-deep/60 backdrop-blur-md" />
-                        <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-2xl bg-white rounded-[3rem] shadow-2xl p-10 overflow-hidden max-h-[90vh] overflow-y-auto" >
-                            <div className="flex justify-between items-center mb-8">
-                                <h3 className="font-serif text-3xl text-floral-deep">{editingCategory ? 'Chỉnh sửa Danh mục' : 'Thêm Danh mục Mới'}</h3>
+                        <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-2xl bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl p-6 md:p-10 overflow-hidden max-h-[95vh] md:max-h-[90vh] overflow-y-auto" >
+                            <div className="flex justify-between items-center mb-6 md:mb-8">
+                                <h3 className="font-serif text-2xl md:text-3xl text-floral-deep">{editingCategory ? 'Chỉnh sửa Danh mục' : 'Thêm Danh mục Mới'}</h3>
                                 <button onClick={() => setIsCatModalOpen(false)} className="p-2 hover:bg-stone-100 rounded-full"><X size={24} /></button>
                             </div>
-                            <form onSubmit={handleSaveCategory} className="space-y-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            <form onSubmit={handleSaveCategory} className="space-y-6 md:space-y-8">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
                                     <div className="space-y-6">
                                         <div>
                                             <label className="block text-xs font-bold uppercase tracking-widest text-stone-400 mb-2">Tên danh mục</label>
