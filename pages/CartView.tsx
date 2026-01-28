@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Trash2, Plus, Minus, ArrowLeft, CreditCard, ShieldCheck } from 'lucide-react';
 import { useCart } from '../components/CartContext';
 import { Link, useNavigate } from 'react-router-dom';
+import { ENDPOINTS } from '../constants';
 
 export const CartView: React.FC = () => {
     const { cartItems, cartTotal, loading, removeFromCart, addToCart } = useCart();
@@ -58,7 +59,15 @@ export const CartView: React.FC = () => {
                                         className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-stone-100 flex flex-col md:flex-row items-center gap-8"
                                     >
                                         <div className="w-32 h-32 md:w-40 md:h-40 rounded-3xl overflow-hidden bg-stone-50 shrink-0">
-                                            <img src={item.imageUrl} className="w-full h-full object-cover" alt={item.productName} />
+                                            <img
+                                                src={item.imageUrl || ENDPOINTS.FILES.VIEW_BY_OBJECT_ID(item.productId)}
+                                                className="w-full h-full object-cover"
+                                                alt={item.productName}
+                                                onError={(e) => {
+                                                    // Fallback to placeholder if everything fails
+                                                    (e.target as HTMLImageElement).src = "https://images.pexels.com/photos/1122621/pexels-photo-1122621.jpeg?auto=compress&cs=tinysrgb&w=300";
+                                                }}
+                                            />
                                         </div>
 
                                         <div className="flex-grow text-center md:text-left">
