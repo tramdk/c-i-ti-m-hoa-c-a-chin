@@ -120,7 +120,7 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
         if (viewOnly && imageFiles.length > 1) {
             timer = setInterval(() => {
                 setCurrentImageIndex(prev => (prev + 1) % imageFiles.length);
-            }, 4000);
+            }, 5000);
         }
         return () => clearInterval(timer);
     }, [viewOnly, imageFiles.length]);
@@ -230,7 +230,7 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
                     onClick={() => setPreviewFile(file)}
                 >
                     {isImageFile(file) ? (
-                        <img src={ViewFile(file.id)} alt={file.fileName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <img src={ViewFile(file.id)} alt={file.fileName} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1s,2s]" />
                     ) : (
                         <File size={20} className="text-stone-400" />
                     )}
