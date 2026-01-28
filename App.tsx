@@ -388,7 +388,8 @@ const AppContent: React.FC = () => {
               <h3 className="font-serif text-xl md:text-2xl text-floral-deep mb-4 uppercase">Đăng nhập để tiếp tục</h3>
               <p className="text-stone-500 mb-8 md:mb-10 leading-relaxed text-sm">Bạn cần đăng nhập tài khoản thành viên để thực hiện thêm sản phẩm vào giỏ hàng.</p>
               <div className="flex flex-col gap-3">
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => {
                     setLoginPromptOpen(false);
                     setPendingCartAction(true);
@@ -397,8 +398,9 @@ const AppContent: React.FC = () => {
                   className="w-full py-4 bg-floral-rose text-white rounded-2xl font-bold uppercase tracking-widest shadow-lg hover:bg-floral-deep transition-all text-xs md:text-sm"
                 >
                   ĐĂNG NHẬP NGAY
-                </button>
-                <button
+                </motion.button>
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
                   onClick={() => {
                     setLoginPromptOpen(false);
                     setPendingCartAction(false);
@@ -406,7 +408,7 @@ const AppContent: React.FC = () => {
                   className="w-full py-4 text-stone-400 font-bold uppercase tracking-widest text-[10px] md:text-xs hover:text-floral-rose transition-colors"
                 >
                   HỦY BỎ
-                </button>
+                </motion.button>
               </div>
             </motion.div>
           </div>
@@ -429,12 +431,23 @@ const AppContent: React.FC = () => {
               <form onSubmit={handleLogin} className="space-y-4 md:space-y-6">
                 <input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email" className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-floral-rose/20 outline-none text-sm" />
                 <input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Mật khẩu" className="w-full px-6 py-4 bg-stone-50 border border-stone-100 rounded-2xl focus:ring-2 focus:ring-floral-rose/20 outline-none text-sm" />
-                <button type="submit" disabled={authLoading} className="w-full py-4 md:py-5 bg-floral-deep text-white rounded-2xl font-bold uppercase transition-all flex items-center justify-center gap-3 text-sm">
+                <motion.button
+                  whileTap={{ scale: 0.96 }}
+                  type="submit"
+                  disabled={authLoading}
+                  className="w-full py-4 md:py-5 bg-floral-deep text-white rounded-2xl font-bold uppercase transition-all flex items-center justify-center gap-3 text-sm"
+                >
                   {authLoading && <Loader2 className="animate-spin" size={18} />}
                   {authLoading ? 'ĐANG XỬ LÝ...' : 'TIẾP TỤC'}
-                </button>
+                </motion.button>
               </form>
-              <button onClick={() => { setAuthModalOpen(false); setPendingCartAction(false); }} className="mt-6 w-full text-stone-400 text-xs md:text-sm hover:text-floral-rose transition-colors">Hủy bỏ</button>
+              <motion.button
+                whileTap={{ scale: 0.95 }}
+                onClick={() => { setAuthModalOpen(false); setPendingCartAction(false); }}
+                className="mt-6 w-full text-stone-400 text-xs md:text-sm hover:text-floral-rose transition-colors"
+              >
+                Hủy bỏ
+              </motion.button>
             </motion.div>
           </div>
         )}

@@ -153,13 +153,15 @@ export const ProductSection: React.FC = () => {
           <h2 className="font-serif text-5xl md:text-6xl text-floral-deep mb-6 uppercase tracking-tight">Bộ Sưu Tập <br /><span className="italic text-floral-rose">Nghệ Thuật</span></h2>
           <div className="flex items-center gap-4">
             <p className="text-xl text-stone-500 font-light max-w-lg">Tuyển chọn những đóa hoa tươi nhất trong ngày, được thiết kế bởi những nghệ nhân hàng đầu.</p>
-            <button
+            <motion.button
+              whileHover={{ rotate: 180 }}
+              whileTap={{ scale: 0.9 }}
               onClick={fetchProducts}
               disabled={loading}
               className={`p-2 rounded-full hover:bg-floral-rose/10 transition-colors text-floral-rose ${loading ? 'animate-spin' : ''}`}
             >
               <RefreshCcw size={20} />
-            </button>
+            </motion.button>
           </div>
         </div>
 
@@ -176,13 +178,14 @@ export const ProductSection: React.FC = () => {
           </div>
           <div className="flex bg-white rounded-full p-2 shadow-sm border border-stone-100 overflow-hidden overflow-x-auto max-w-full no-scrollbar">
             {categories.map((cat) => (
-              <button
+              <motion.button
+                whileTap={{ scale: 0.95 }}
                 key={cat.id}
                 onClick={() => setFilter(cat.id)}
                 className={`px-6 md:px-8 py-3 rounded-full text-xs md:text-sm font-bold tracking-widest uppercase transition-all whitespace-nowrap ${filter === cat.id ? 'bg-floral-rose text-white shadow-md' : 'text-stone-400 hover:text-floral-rose'}`}
               >
                 {cat.name}
-              </button>
+              </motion.button>
             ))}
           </div>
         </div>
@@ -215,54 +218,104 @@ export const ProductSection: React.FC = () => {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.9 }}
-                whileHover={{ y: -5, scale: 1.01 }}
+                transition={{ duration: 0.5 }}
                 key={product.id}
-                className="group cursor-pointer flex flex-col bg-white md:bg-transparent rounded-[1.5rem] md:rounded-none border border-stone-100 md:border-none shadow-sm md:shadow-none overflow-hidden transition-all duration-500 hover:z-10"
+                className="group relative cursor-pointer flex flex-col bg-white md:bg-transparent rounded-[2rem] md:rounded-none overflow-hidden transition-all duration-700"
                 onClick={() => setSelectedProduct(product)}
               >
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-white mb-3 md:mb-8 shadow-sm group-hover:shadow-[0_20px_50px_rgba(180,140,110,0.15)] transition-all duration-700">
-                  <FileHandler
-                    objectId={product.id}
-                    objectType="product"
-                    viewOnly={true}
-                    fallbackImage={product.image}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-[1.5s] ease-out"
-                  />
-                  <div className="absolute inset-0 bg-floral-deep/0 group-hover:bg-floral-deep/5 transition-colors duration-500" />
-                  <div className="absolute top-2 left-2 md:top-6 md:left-6 z-20">
+                {/* Image Container with sophisticated hover */}
+                <div className="relative aspect-[4/5] w-full overflow-hidden bg-stone-50 md:mb-6 shadow-sm group-hover:shadow-[0_30px_60px_-15px_rgba(216,140,154,0.25)] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] rounded-[2rem] md:rounded-[1.5rem]">
+
+                  {/* Image itself */}
+                  <div className="w-full h-full overflow-hidden">
+                    <FileHandler
+                      objectId={product.id}
+                      objectType="product"
+                      viewOnly={true}
+                      fallbackImage={product.image}
+                      className="w-full h-full object-cover transition-transform duration-[2s] ease-out group-hover:scale-110"
+                    />
+                  </div>
+
+                  {/* Gradient Overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-floral-deep/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
+
+                  {/* Quick Action: Wishlist (Top Right) */}
+                  <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        // Handle wishlist logic if any
+                      }}
+                      className="w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-stone-400 hover:text-floral-rose transition-all shadow-lg"
+                    >
+                      <Heart size={20} className="transition-transform active:scale-125" />
+                    </motion.button>
+                  </div>
+
+                  {/* Badge (Top Left) */}
+                  <div className="absolute top-4 left-4 md:top-6 md:left-6 z-20">
                     {product.badge && (
-                      <span className="px-2 py-0.5 md:px-5 md:py-2 bg-floral-rose/90 backdrop-blur-sm text-white text-[7px] md:text-[12px] font-bold tracking-widest uppercase rounded-full shadow-lg">
+                      <span className="px-3 py-1 md:px-5 md:py-2 bg-white/90 backdrop-blur-md text-floral-deep text-[8px] md:text-[11px] font-bold tracking-[0.2em] uppercase rounded-full shadow-md border border-floral-rose/10">
                         {product.badge}
                       </span>
                     )}
                   </div>
-                  <div className="hidden md:block absolute inset-x-0 bottom-0 p-8 translate-y-full group-hover:translate-y-0 transition-all duration-700 ease-out z-20">
-                    <button
+
+                  {/* Add to Cart Overlay Button (Desktop) */}
+                  <div className="hidden md:flex absolute inset-x-0 bottom-0 p-6 translate-y-4 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] z-20">
+                    <motion.button
+                      whileHover={{ y: -4 }}
+                      whileTap={{ scale: 0.95 }}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleAddToCart(product);
                       }}
-                      className="w-full py-5 bg-white/95 backdrop-blur-sm text-floral-deep rounded-2xl font-bold text-xs tracking-[0.2em] uppercase flex items-center justify-center gap-3 shadow-xl hover:bg-floral-rose hover:text-white transition-all duration-300 group/btn"
+                      className="w-full py-4 bg-floral-rose text-white rounded-xl font-bold text-[10px] tracking-[0.2em] uppercase flex items-center justify-center gap-3 shadow-xl hover:bg-floral-deep transition-all duration-300 group/btn"
                     >
-                      <ShoppingBag size={16} className="text-floral-rose group-hover/btn:text-white transition-colors" /> THÊM VÀO GIỎ
-                    </button>
+                      <ShoppingBag size={16} className="transition-transform group-hover/btn:scale-110" />
+                      THÊM VÀO GIỎ
+                    </motion.button>
                   </div>
                 </div>
-                <div className="p-3 md:p-0 md:px-4 text-center z-20">
-                  <h3 className="font-serif text-sm md:text-2xl text-floral-deep mb-1 md:mb-2 truncate md:whitespace-normal line-clamp-1 group-hover:text-floral-rose transition-colors duration-500">{product.name}</h3>
-                  <div className="hidden md:block w-12 h-0.5 bg-floral-rose/20 mx-auto mb-3 transform origin-center group-hover:scale-x-150 group-hover:bg-floral-rose transition-all duration-500" />
-                  <p className="text-floral-rose font-bold text-sm md:text-xl transform group-hover:scale-110 transition-transform duration-500">{product.price.toLocaleString()}đ</p>
 
-                  <button
+                {/* Product Info */}
+                <div className="p-4 md:p-0 md:px-2 text-center transition-transform duration-500 group-hover:translate-y-[-4px]">
+                  <p className="text-[10px] md:text-xs text-stone-400 uppercase tracking-[0.2em] mb-2 font-medium opacity-80 group-hover:text-floral-rose/60 transition-colors">
+                    {categories.find(c => c.id === product.categoryId)?.name || 'Bộ sưu tập'}
+                  </p>
+                  <h3 className="font-serif text-base md:text-2xl text-floral-deep mb-2 line-clamp-1 group-hover:text-floral-rose transition-colors duration-500">
+                    {product.name}
+                  </h3>
+
+                  <div className="flex items-center justify-center gap-3">
+                    <span className="text-floral-rose font-bold text-sm md:text-xl">
+                      {product.price.toLocaleString()}đ
+                    </span>
+                    <div className="w-1 h-1 rounded-full bg-stone-200" />
+                    <div className="flex items-center gap-0.5 text-floral-gold">
+                      <Star size={10} fill="currentColor" />
+                      <span className="text-[10px] md:text-xs text-stone-400 font-bold">4.9</span>
+                    </div>
+                  </div>
+
+                  {/* Mobile Add to Cart */}
+                  <motion.button
+                    whileTap={{ scale: 0.92 }}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleAddToCart(product);
                     }}
-                    className="md:hidden mt-2 w-full py-2 bg-floral-rose text-white rounded-lg font-bold text-[9px] tracking-widest uppercase flex items-center justify-center gap-1 shadow-md shadow-floral-rose/10 active:scale-95 transition-transform"
+                    className="md:hidden mt-4 w-full py-3 bg-floral-rose text-white rounded-xl font-bold text-[10px] tracking-[0.15em] uppercase flex items-center justify-center gap-2 shadow-lg shadow-floral-rose/20 active:bg-floral-deep transition-all"
                   >
-                    <Plus size={12} /> THÊM
-                  </button>
+                    <Plus size={14} /> THÊM VÀO GIỎ
+                  </motion.button>
                 </div>
+
+                {/* Subtle border for desktop hover effect */}
+                <div className="hidden md:block absolute -inset-4 border border-floral-rose/0 rounded-[2.5rem] group-hover:border-floral-rose/5 transition-colors duration-700 -z-10" />
               </motion.div>
             ))}
           </AnimatePresence>
@@ -280,10 +333,15 @@ export const ProductSection: React.FC = () => {
               exit={{ opacity: 0, scale: 0.9, y: 30 }}
               className="relative w-full max-w-6xl bg-white rounded-[2rem] md:rounded-[3rem] shadow-2xl overflow-hidden flex flex-col md:flex-row h-auto md:h-[750px] max-h-[95vh] md:max-h-[92vh]"
             >
-              <button onClick={() => setSelectedProduct(null)} className="absolute top-4 right-4 md:top-8 md:right-8 z-50 w-10 h-10 md:w-12 md:h-12 bg-white/80 md:bg-stone-100 backdrop-blur-sm rounded-full flex items-center justify-center text-stone-400 hover:bg-floral-rose hover:text-white shadow-sm md:shadow-none transition-all">
+              <motion.button
+                whileHover={{ scale: 1.1, rotate: 90 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => setSelectedProduct(null)}
+                className="absolute top-4 right-4 md:top-8 md:right-8 z-50 w-10 h-10 md:w-12 md:h-12 bg-white/80 md:bg-stone-100 backdrop-blur-sm rounded-full flex items-center justify-center text-stone-400 hover:bg-floral-rose hover:text-white shadow-sm md:shadow-none transition-all"
+              >
                 <X size={20} className="md:hidden" />
                 <X size={24} className="hidden md:block" />
-              </button>
+              </motion.button>
 
               {/* Product Gallery Section */}
               <div className="w-full md:w-1/2 lg:w-[45%] bg-stone-100 flex-shrink-0">
@@ -300,7 +358,7 @@ export const ProductSection: React.FC = () => {
               <div className="w-full md:w-1/2 lg:w-[55%] p-6 md:p-12 flex flex-col overflow-y-auto">
                 <div className="flex items-center justify-between mb-4 md:mb-6">
                   <span className="px-3 md:px-4 py-1.5 bg-stone-50 text-stone-400 rounded-full text-[10px] md:text-[12px] font-bold uppercase tracking-[0.2em] border border-stone-100">
-                    {categories.find(c => c.id === selectedProduct.category)?.name || selectedProduct.category}
+                    {categories.find(c => c.id === selectedProduct.categoryId)?.name || 'Sản phẩm'}
                   </span>
                   <div className="flex items-center gap-1 text-floral-gold scale-90 md:scale-100 origin-right">
                     {[...Array(5)].map((_, i) => <Star key={i} size={14} fill="currentColor" />)}
@@ -336,18 +394,22 @@ export const ProductSection: React.FC = () => {
                 </div>
 
                 <div className="mt-6 md:mt-auto flex gap-3">
-                  <button
+                  <motion.button
+                    whileHover={{ y: -4 }}
+                    whileTap={{ scale: 0.95 }}
                     onClick={() => handleAddToCart(selectedProduct)}
-                    className="flex-grow py-4 md:py-5 bg-floral-deep text-white rounded-xl md:rounded-[1.2rem] font-bold text-[10px] md:text-sm tracking-[0.2em] uppercase flex items-center justify-center gap-3 md:gap-4 shadow-xl hover:bg-stone-800 transform md:hover:-translate-y-1 transition-all duration-500"
+                    className="flex-grow py-4 md:py-5 bg-floral-deep text-white rounded-xl md:rounded-[1.2rem] font-bold text-[10px] md:text-sm tracking-[0.2em] uppercase flex items-center justify-center gap-3 md:gap-4 shadow-xl hover:bg-stone-800 transition-all duration-500"
                   >
-                    <ShoppingBag size={18} className="md:hidden" />
-                    <ShoppingBag size={20} className="hidden md:block" />
+                    <ShoppingBag size={20} />
                     THÊM VÀO GIỎ HÀNG
-                  </button>
-                  <button className="w-14 h-14 md:w-16 md:h-16 border-2 border-stone-100 rounded-xl md:rounded-[1.2rem] flex items-center justify-center text-stone-300 hover:text-floral-rose hover:border-floral-rose/20 transition-all duration-500 group">
-                    <Heart size={20} className="md:hidden group-hover:fill-current" />
-                    <Heart size={24} className="hidden md:block group-hover:fill-current" />
-                  </button>
+                  </motion.button>
+                  <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.9 }}
+                    className="w-14 h-14 md:w-16 md:h-16 border-2 border-stone-100 rounded-xl md:rounded-[1.2rem] flex items-center justify-center text-stone-300 hover:text-floral-rose hover:border-floral-rose/20 transition-all duration-500 group"
+                  >
+                    <Heart size={24} className="group-hover:fill-current transition-colors" />
+                  </motion.button>
                 </div>
               </div>
             </motion.div>
