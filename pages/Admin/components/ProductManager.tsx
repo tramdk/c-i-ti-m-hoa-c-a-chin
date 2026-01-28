@@ -4,6 +4,7 @@ import { Search, Edit2, Trash2, X, Save, Plus } from 'lucide-react';
 import { Product, Category } from '../../../types';
 import { FileHandler } from '../../../components/FileHandler';
 import { api, triggerToast } from '../../../backend';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 
 interface ProductManagerProps {
     products: Product[];
@@ -22,6 +23,12 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
     const [selectedCategory, setSelectedCategory] = useState<string | number>('all');
     const [isIdVisible, setIsIdVisible] = useState(false);
 
+    // Confirm Modal State
+    const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; productId: string | number | null }>({
+        isOpen: false,
+        productId: null
+    });
+
     const filteredProducts = products.filter(p => {
         const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
             String(p.id).toLowerCase().includes(searchTerm.toLowerCase());
@@ -30,6 +37,7 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
     });
 
     const handleSaveProduct = async (e: React.FormEvent) => {
+        // ... (same as before)
         e.preventDefault();
         try {
             const payload = {
@@ -54,14 +62,15 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
         }
     };
 
-    const handleDeleteProduct = async (id: string | number) => {
-        if (confirm('Bạn có chắc chắn muốn xóa sản phẩm này?')) {
-            try {
-                await api.products.delete(id);
-                onRefresh();
-                triggerToast("Đã xóa sản phẩm", "info");
-            } catch (err) { }
-        }
+    const handleDeleteProduct = async () => {
+        if (!confirmDelete.productId) return;
+
+        try {
+            await api.products.delete(confirmDelete.productId);
+            onRefresh();
+            triggerToast("Đã xóa sản phẩm", "info");
+        } catch (err) { }
+        setConfirmDelete({ isOpen: false, productId: null });
     };
 
     const openAddModal = () => {
@@ -144,7 +153,7 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
                                     <td className="px-8 py-6 text-right">
                                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button onClick={() => openEditModal(product)} className="p-3 bg-white text-stone-400 hover:text-floral-gold rounded-xl shadow-sm border border-stone-100"><Edit2 size={16} /></button>
-                                            <button onClick={() => handleDeleteProduct(product.id)} className="p-3 bg-white text-stone-400 hover:text-red-500 rounded-xl shadow-sm border border-stone-100"><Trash2 size={16} /></button>
+                                            <button onClick={() => setConfirmDelete({ isOpen: true, productId: product.id })} className="p-3 bg-white text-stone-400 hover:text-red-500 rounded-xl shadow-sm border border-stone-100"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -170,7 +179,7 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
                             </div>
                             <div className="flex gap-2 mt-3 pt-3 border-t border-stone-50">
                                 <button onClick={() => openEditModal(product)} className="flex-1 py-2 bg-stone-50 text-stone-400 rounded-lg flex items-center justify-center active:bg-floral-gold active:text-white transition-colors"><Edit2 size={14} /></button>
-                                <button onClick={() => handleDeleteProduct(product.id)} className="flex-1 py-2 bg-stone-50 text-stone-400 rounded-lg flex items-center justify-center active:bg-red-500 active:text-white transition-colors"><Trash2 size={14} /></button>
+                                <button onClick={() => setConfirmDelete({ isOpen: true, productId: product.id })} className="flex-1 py-2 bg-stone-50 text-stone-400 rounded-lg flex items-center justify-center active:bg-red-500 active:text-white transition-colors"><Trash2 size={14} /></button>
                             </div>
                         </div>
                     ))}
@@ -236,6 +245,16 @@ export const ProductManager: React.FC<ProductManagerProps> = ({ products, catego
                     </div>
                 )}
             </AnimatePresence>
+
+            <ConfirmModal
+                isOpen={confirmDelete.isOpen}
+                title="Xóa sản phẩm?"
+                message="Hành động này không thể hoàn tác. Sản phẩm sẽ bị xóa khỏi hệ thống."
+                onConfirm={handleDeleteProduct}
+                onCancel={() => setConfirmDelete({ isOpen: false, productId: null })}
+                confirmText="XÓA NGAY"
+                type="danger"
+            />
         </>
     );
 };

@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { File, Image as ImageIcon, Download, Trash2, Loader2, ExternalLink, X, CheckCircle2, AlertTriangle } from 'lucide-react';
 import { ENDPOINTS } from '../constants';
+import { ConfirmModal } from './ConfirmModal';
 
 interface FileViewerProps {
     objectId: string | number;
@@ -127,9 +128,11 @@ export const FileViewer: React.FC<FileViewerProps> = ({
         }
     };
 
-    const handleDelete = async (fileId: string | number) => {
+    const handleDelete = async () => {
+        if (!confirmDelete) return;
+
         try {
-            const response = await fetch(ENDPOINTS.FILES.DELETE(fileId), {
+            const response = await fetch(ENDPOINTS.FILES.DELETE(confirmDelete), {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('chinchin_token')}`
@@ -138,14 +141,14 @@ export const FileViewer: React.FC<FileViewerProps> = ({
 
             if (response.ok) {
                 setFiles(prev => {
-                    const newFiles = prev.filter(f => f.id !== fileId);
-                    if (previewFile?.id === fileId) {
+                    const newFiles = prev.filter(f => f.id !== confirmDelete);
+                    if (previewFile?.id === confirmDelete) {
                         const nextImage = newFiles.find(f => isImageFile(f));
                         setPreviewFile(nextImage || newFiles[0] || null);
                     }
                     return newFiles;
                 });
-                onDeleteSuccess?.(fileId);
+                onDeleteSuccess?.(confirmDelete);
                 showToast('Xóa tệp thành công');
             } else {
                 showToast('Không thể xóa tệp', 'error');
@@ -383,51 +386,15 @@ export const FileViewer: React.FC<FileViewerProps> = ({
                         )}
                     </AnimatePresence>
 
-                    {/* Delete Confirmation Popup */}
-                    <AnimatePresence>
-                        {confirmDelete && (
-                            <div className="fixed inset-0 z-[1100] flex items-center justify-center p-6">
-                                <motion.div
-                                    initial={{ opacity: 0 }}
-                                    animate={{ opacity: 1 }}
-                                    exit={{ opacity: 0 }}
-                                    onClick={() => setConfirmDelete(null)}
-                                    className="absolute inset-0 bg-floral-deep/40 backdrop-blur-sm"
-                                />
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.9, y: 20 }}
-                                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                                    exit={{ opacity: 0, scale: 0.9, y: 20 }}
-                                    onClick={(e) => e.stopPropagation()}
-                                    className="relative w-full max-w-sm bg-white rounded-[3rem] shadow-2xl p-10 text-center border border-stone-100"
-                                >
-                                    <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                                        <Trash2 size={32} />
-                                    </div>
-                                    <h3 className="text-xl font-bold text-floral-deep mb-2">Xác nhận xóa?</h3>
-                                    <p className="text-sm text-stone-500 mb-8">
-                                        Bạn có chắc chắn muốn xóa tệp này? Hành động này không thể hoàn tác.
-                                    </p>
-                                    <div className="flex gap-3">
-                                        <button
-                                            type="button"
-                                            onClick={() => setConfirmDelete(null)}
-                                            className="flex-1 py-3 bg-stone-100 text-stone-600 rounded-xl font-bold hover:bg-stone-200 transition-colors"
-                                        >
-                                            Hủy
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={() => handleDelete(confirmDelete)}
-                                            className="flex-1 py-3 bg-rose-500 text-white rounded-xl font-bold hover:bg-rose-600 transition-colors shadow-lg shadow-rose-500/20"
-                                        >
-                                            Xóa ngay
-                                        </button>
-                                    </div>
-                                </motion.div>
-                            </div>
-                        )}
-                    </AnimatePresence>
+                    <ConfirmModal
+                        isOpen={!!confirmDelete}
+                        title="Xác nhận xóa tệp?"
+                        message="Hành động này không thể hoàn tác và tệp sẽ bị xóa vĩnh viễn khỏi máy chủ."
+                        onConfirm={handleDelete}
+                        onCancel={() => setConfirmDelete(null)}
+                        confirmText="Xác nhận xóa"
+                        type="danger"
+                    />
 
                     {/* Toast Notification */}
                     <AnimatePresence>

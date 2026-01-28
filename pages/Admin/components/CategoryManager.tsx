@@ -4,6 +4,7 @@ import { Search, Edit2, Trash2, X, Save, Tag, Plus } from 'lucide-react';
 import { Category, Product } from '../../../types';
 import { FileHandler } from '../../../components/FileHandler';
 import { api, triggerToast } from '../../../backend';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 
 interface CategoryManagerProps {
     categories: Category[];
@@ -16,6 +17,12 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ categories, pr
     const [isCatModalOpen, setIsCatModalOpen] = useState(false);
     const [editingCategory, setEditingCategory] = useState<Category | null>(null);
     const [catFormData, setCatFormData] = useState<Partial<Category>>({ name: '', description: '', image: '' });
+
+    // Confirm Modal State
+    const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; catId: string | number | null }>({
+        isOpen: false,
+        catId: null
+    });
 
     const filteredCategories = categories.filter(c =>
         c.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -42,19 +49,24 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ categories, pr
         } catch (err) { }
     };
 
-    const handleDeleteCategory = async (id: string | number) => {
+    const handleDeleteCategory = async () => {
+        if (!confirmDelete.catId) return;
+
+        try {
+            await api.productCategories.delete(confirmDelete.catId);
+            onRefresh();
+            triggerToast("Đã xóa danh mục", "info");
+        } catch (err) { }
+        setConfirmDelete({ isOpen: false, catId: null });
+    };
+
+    const confirmDeleteAction = (id: string | number) => {
         const hasProducts = products.some(p => String(p.category) === String(id));
         if (hasProducts) {
             triggerToast('Không thể xóa danh mục này vì vẫn còn sản phẩm thuộc danh mục.', 'error');
             return;
         }
-        if (confirm('Bạn có chắc chắn muốn xóa danh mục này?')) {
-            try {
-                await api.productCategories.delete(id);
-                onRefresh();
-                triggerToast("Đã xóa danh mục", "info");
-            } catch (err) { }
-        }
+        setConfirmDelete({ isOpen: true, catId: id });
     };
 
     const openAddModal = () => {
@@ -117,7 +129,7 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ categories, pr
                                 </p>
                                 <div className="flex gap-2">
                                     <button onClick={() => openEditModal(cat)} className="p-2.5 bg-stone-50 text-stone-400 hover:text-floral-gold hover:bg-stone-100 rounded-xl transition-all"><Edit2 size={14} /></button>
-                                    <button onClick={() => handleDeleteCategory(cat.id)} className="p-2.5 bg-stone-50 text-stone-400 hover:text-red-500 hover:bg-stone-100 rounded-xl transition-all"><Trash2 size={14} /></button>
+                                    <button onClick={() => confirmDeleteAction(cat.id)} className="p-2.5 bg-stone-50 text-stone-400 hover:text-red-500 hover:bg-stone-100 rounded-xl transition-all"><Trash2 size={14} /></button>
                                 </div>
                             </div>
                         </div>
@@ -168,6 +180,16 @@ export const CategoryManager: React.FC<CategoryManagerProps> = ({ categories, pr
                     </div>
                 )}
             </AnimatePresence>
+
+            <ConfirmModal
+                isOpen={confirmDelete.isOpen}
+                title="Xóa danh mục?"
+                message="Tất cả dữ liệu danh mục sẽ bị xóa. Hành động này không thể hoàn tác."
+                onConfirm={handleDeleteCategory}
+                onCancel={() => setConfirmDelete({ isOpen: false, catId: null })}
+                confirmText="XÓA NGAY"
+                type="danger"
+            />
         </>
     );
 };

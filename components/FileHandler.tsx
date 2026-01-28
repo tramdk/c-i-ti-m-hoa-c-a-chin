@@ -7,6 +7,7 @@ import {
     AlertCircle
 } from 'lucide-react';
 import { ENDPOINTS } from '../constants';
+import { ConfirmModal } from './ConfirmModal';
 
 interface FileData {
     id: string;
@@ -104,7 +105,6 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
         if (objectId && !objectId.toString().startsWith('temp_')) {
             viewFiles();
         } else if (objectId && objectId.toString().startsWith('temp_')) {
-            // For new objects, we might still want to see files if we refreshed or came back
             viewFiles();
         } else {
             setFiles([]);
@@ -144,7 +144,6 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
                 const data = await response.json();
                 const fetchedFiles: FileData[] = Array.isArray(data) ? data : (data ? [data] : []);
 
-                // Deduplicate by ID to ensure no clones
                 setFiles(prev => {
                     const combined = [...fetchedFiles];
                     const uniqueMap = new Map();
@@ -173,9 +172,11 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
         }
     };
 
-    const handleDelete = async (fileId: string | number) => {
+    const handleDelete = async () => {
+        if (!confirmDelete) return;
+
         try {
-            const response = await fetch(ENDPOINTS.FILES.DELETE(fileId), {
+            const response = await fetch(ENDPOINTS.FILES.DELETE(confirmDelete), {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('chinchin_token')}`
@@ -184,14 +185,14 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
 
             if (response.ok) {
                 setFiles(prev => {
-                    const newFiles = prev.filter(f => f.id !== fileId);
-                    if (previewFile?.id === fileId) {
+                    const newFiles = prev.filter(f => f.id !== confirmDelete);
+                    if (previewFile?.id === confirmDelete) {
                         const nextImage = newFiles.find(f => isImageFile(f));
                         setPreviewFile(nextImage || newFiles[0] || null);
                     }
                     return newFiles;
                 });
-                onDeleteSuccess?.(fileId);
+                onDeleteSuccess?.(confirmDelete);
                 showToast('Xóa tệp thành công');
             } else {
                 showToast('Không thể xóa tệp', 'error');
@@ -502,7 +503,6 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
 
             {/* File List */}
             <div className="space-y-6">
-                {/* Section: Recently Uploaded */}
                 {files.filter(f => sessionUploadedIds.has(f.id)).length > 0 && (
                     <div className="space-y-3">
                         <div className="flex items-center gap-2 px-2">
@@ -519,7 +519,6 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
                     </div>
                 )}
 
-                {/* Section: Existing Files */}
                 {files.filter(f => !sessionUploadedIds.has(f.id)).length > 0 && (
                     <div className="space-y-3">
                         <div className="flex items-center gap-2 px-2">
@@ -546,20 +545,15 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
                                 <motion.img initial={{ scale: 0.9 }} animate={{ scale: 1 }} exit={{ scale: 0.9 }} src={selectedImage} className="relative max-w-5xl max-h-full rounded-3xl shadow-2xl" onClick={e => e.stopPropagation()} />
                             </div>
                         )}
-                        {confirmDelete && (
-                            <div className="fixed inset-0 z-[1100] flex items-center justify-center p-6">
-                                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="absolute inset-0 bg-floral-deep/40 backdrop-blur-sm" onClick={() => setConfirmDelete(null)} />
-                                <div className="relative w-full max-w-sm bg-white rounded-[3rem] p-10 text-center shadow-2xl border border-stone-100">
-                                    <div className="w-16 h-16 bg-rose-50 text-rose-500 rounded-2xl flex items-center justify-center mx-auto mb-4"><Trash2 size={32} /></div>
-                                    <h3 className="text-xl font-bold text-floral-deep mb-2">Xác nhận xóa?</h3>
-                                    <p className="text-sm text-stone-500 mb-8">Hành động này không thể hoàn tác.</p>
-                                    <div className="flex gap-3">
-                                        <button onClick={() => setConfirmDelete(null)} className="flex-1 py-3 bg-stone-100 text-stone-600 rounded-xl font-bold">Hủy</button>
-                                        <button onClick={() => handleDelete(confirmDelete)} className="flex-1 py-3 bg-rose-500 text-white rounded-xl font-bold">Xóa</button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
+                        <ConfirmModal
+                            isOpen={!!confirmDelete}
+                            title="Xóa tệp tin?"
+                            message="Dữ liệu này sẽ bị xóa vĩnh viễn khỏi máy chủ. Bạn chắc chắn chứ?"
+                            onConfirm={handleDelete}
+                            onCancel={() => setConfirmDelete(null)}
+                            confirmText="XÓA NGAY"
+                            type="danger"
+                        />
                         {toast && (
                             <motion.div initial={{ opacity: 0, y: 50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 50 }} className={`fixed bottom-8 left-1/2 -translate-x-1/2 z-[1200] px-6 py-3 rounded-2xl shadow-xl flex items-center gap-3 border ${toast.type === 'success' ? 'bg-emerald-500 border-emerald-400 text-white' : 'bg-rose-500 border-rose-400 text-white'}`}>
                                 {toast.type === 'success' ? <CheckCircle2 size={18} /> : <AlertTriangle size={18} />}

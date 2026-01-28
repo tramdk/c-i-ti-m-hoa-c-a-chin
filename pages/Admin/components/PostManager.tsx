@@ -6,6 +6,7 @@ import 'react-quill-new/dist/quill.snow.css';
 import { Post, PostCategory } from '../../../types';
 import { FileHandler } from '../../../components/FileHandler';
 import { api, triggerToast } from '../../../backend';
+import { ConfirmModal } from '../../../components/ConfirmModal';
 
 interface PostManagerProps {
     posts: Post[];
@@ -22,6 +23,12 @@ export const PostManager: React.FC<PostManagerProps> = ({ posts, postCategories,
     });
 
     const [selectedPostCategory, setSelectedPostCategory] = useState<string | number>('all');
+
+    // Confirm Modal State
+    const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; postId: string | number | null }>({
+        isOpen: false,
+        postId: null
+    });
 
     const filteredPosts = posts.filter(p => {
         const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -55,14 +62,15 @@ export const PostManager: React.FC<PostManagerProps> = ({ posts, postCategories,
         } catch (err) { }
     };
 
-    const handleDeletePost = async (id: string | number) => {
-        if (confirm('Bạn có chắc chắn muốn xóa bài viết này?')) {
-            try {
-                await api.blog.delete(id);
-                onRefresh();
-                triggerToast("Đã xóa bài viết", "info");
-            } catch (err) { }
-        }
+    const handleDeletePost = async () => {
+        if (!confirmDelete.postId) return;
+
+        try {
+            await api.blog.delete(confirmDelete.postId);
+            onRefresh();
+            triggerToast("Đã xóa bài viết", "info");
+        } catch (err) { }
+        setConfirmDelete({ isOpen: false, postId: null });
     };
 
     const openAddModal = () => {
@@ -154,7 +162,7 @@ export const PostManager: React.FC<PostManagerProps> = ({ posts, postCategories,
                                     <td className="px-8 py-6 text-right">
                                         <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                             <button onClick={() => openEditModal(post)} className="p-3 bg-white text-stone-400 hover:text-floral-gold rounded-xl shadow-sm border border-stone-100"><Edit2 size={16} /></button>
-                                            <button onClick={() => handleDeletePost(post.id)} className="p-3 bg-white text-stone-400 hover:text-red-500 rounded-xl shadow-sm border border-stone-100"><Trash2 size={16} /></button>
+                                            <button onClick={() => setConfirmDelete({ isOpen: true, postId: post.id })} className="p-3 bg-white text-stone-400 hover:text-red-500 rounded-xl shadow-sm border border-stone-100"><Trash2 size={16} /></button>
                                         </div>
                                     </td>
                                 </tr>
@@ -180,7 +188,7 @@ export const PostManager: React.FC<PostManagerProps> = ({ posts, postCategories,
                             </div>
                             <div className="flex gap-2 mt-3 pt-3 border-t border-stone-50">
                                 <button onClick={() => openEditModal(post)} className="flex-1 py-2 bg-stone-50 text-stone-400 rounded-lg flex items-center justify-center active:bg-floral-gold active:text-white transition-colors"><Edit2 size={14} /></button>
-                                <button onClick={() => handleDeletePost(post.id)} className="flex-1 py-2 bg-stone-50 text-stone-400 rounded-lg flex items-center justify-center active:bg-red-500 active:text-white transition-colors"><Trash2 size={14} /></button>
+                                <button onClick={() => setConfirmDelete({ isOpen: true, postId: post.id })} className="flex-1 py-2 bg-stone-50 text-stone-400 rounded-lg flex items-center justify-center active:bg-red-500 active:text-white transition-colors"><Trash2 size={14} /></button>
                             </div>
                         </div>
                     ))}
@@ -255,6 +263,16 @@ export const PostManager: React.FC<PostManagerProps> = ({ posts, postCategories,
                     </div>
                 )}
             </AnimatePresence>
+
+            <ConfirmModal
+                isOpen={confirmDelete.isOpen}
+                title="Xóa bài viết?"
+                message="Hành động này sẽ xóa vĩnh viễn nội dung bài viết. Bạn chắc chắn chứ?"
+                onConfirm={handleDeletePost}
+                onCancel={() => setConfirmDelete({ isOpen: false, postId: null })}
+                confirmText="XÓA NGAY"
+                type="danger"
+            />
         </>
     );
 };
