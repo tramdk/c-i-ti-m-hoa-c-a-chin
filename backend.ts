@@ -114,7 +114,14 @@ const fetchWithAuth = async <T>(url: string, options: RequestOptions = {}): Prom
 
 // Raw fetch wrapper for non-auth requests but still using handleResponse
 const safeFetch = async <T>(url: string, options: RequestOptions = {}): Promise<T> => {
-    const response = await fetch(url, options);
+    const response = await fetch(url, {
+        ...options,
+        headers: {
+            'Content-Type': 'application/json',
+            ...options.headers,
+        },
+        body: options.body ? JSON.stringify(options.body) : undefined,
+    } as RequestInit);
     return handleResponse(response) as Promise<T>;
 };
 

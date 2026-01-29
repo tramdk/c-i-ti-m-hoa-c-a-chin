@@ -1,6 +1,6 @@
 
 // export const BACKEND_URL = 'http://localhost:5000';
-export const BACKEND_URL = import.meta.env.VITE_API_URL || ':https://good-auberta-tramdk-768006a3.koyeb.app';
+export const BACKEND_URL = import.meta.env.VITE_API_URL || 'https://good-auberta-tramdk-768006a3.koyeb.app';
 export const API_BASE = `${BACKEND_URL}/api`;
 
 export const ENDPOINTS = {
