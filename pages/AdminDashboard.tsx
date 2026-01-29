@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Package, Layers, MessageSquare, RefreshCcw } from 'lucide-react';
 import { api } from '../backend';
+import { STORAGE_KEYS } from '../constants';
 import { Product, Category, Post, PostCategory } from '../types';
 import { ProductManager } from './Admin/components/ProductManager';
 import { CategoryManager } from './Admin/components/CategoryManager';
@@ -47,9 +48,9 @@ export const AdminDashboard: React.FC = () => {
   }, []);
 
   const loadLocalData = () => {
-    const localProds = localStorage.getItem('chinchin_products');
-    const localCats = localStorage.getItem('chinchin_categories');
-    const localPosts = localStorage.getItem('chinchin_posts');
+    const localProds = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
+    const localCats = localStorage.getItem(STORAGE_KEYS.CATEGORIES);
+    const localPosts = localStorage.getItem(STORAGE_KEYS.POSTS);
 
     if (localProds) setProducts(JSON.parse(localProds));
     else setProducts(INITIAL_DEFAULT_PRODUCTS);
@@ -73,13 +74,11 @@ export const AdminDashboard: React.FC = () => {
       if (prodsData.status === 'fulfilled') {
         const data = prodsData.value;
         setProducts(data);
-        localStorage.setItem('chinchin_products', JSON.stringify(data));
       }
 
       if (catsData.status === 'fulfilled') {
         const data = catsData.value;
         setCategories(data);
-        localStorage.setItem('chinchin_categories', JSON.stringify(data));
       }
 
       if (postsData.status === 'fulfilled') {
@@ -97,7 +96,6 @@ export const AdminDashboard: React.FC = () => {
           image: "https://images.unsplash.com/photo-1591886861324-42861e6992d1?auto=format&fit=crop&q=80"
         }));
         setPosts(formattedPosts);
-        localStorage.setItem('chinchin_posts', JSON.stringify(formattedPosts));
       }
 
       if (postCatsData.status === 'fulfilled') {
@@ -114,13 +112,11 @@ export const AdminDashboard: React.FC = () => {
 
   const refreshProducts = () => api.products.getAll().then(data => {
     setProducts(data);
-    localStorage.setItem('chinchin_products', JSON.stringify(data));
     window.dispatchEvent(new Event('storage'));
   });
 
   const refreshCategories = () => api.productCategories.getAll().then(data => {
     setCategories(data);
-    localStorage.setItem('chinchin_categories', JSON.stringify(data));
     window.dispatchEvent(new Event('storage'));
   });
 
@@ -138,7 +134,6 @@ export const AdminDashboard: React.FC = () => {
       image: p.image || "https://images.unsplash.com/photo-1591886861324-42861e6992d1?auto=format&fit=crop&q=80"
     }));
     setPosts(formattedPosts);
-    localStorage.setItem('chinchin_posts', JSON.stringify(formattedPosts));
     window.dispatchEvent(new Event('storage'));
   });
 

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowLeft, Calendar, User, Clock, Share2, Bookmark, Heart, MessageSquare, Star, Loader2 } from 'lucide-react';
 import { MOCK_POSTS } from './Posts';
-import { ENDPOINTS } from '../constants';
+import { ENDPOINTS, STORAGE_KEYS } from '../constants';
 import { api } from '../backend';
 
 import { Post } from '../types';
@@ -67,7 +67,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ postId, onBack }) => {
                 }
             } catch (error) {
                 console.warn("API Detail failed, falling back to local.");
-                const localPosts = localStorage.getItem('chinchin_posts');
+                const localPosts = localStorage.getItem(STORAGE_KEYS.POSTS);
                 const posts: Post[] = localPosts ? JSON.parse(localPosts) : [];
                 const foundPost = posts.find(p => String(p.id) === String(postId)) || MOCK_POSTS.find(p => String(p.id) === String(postId));
                 setPost(foundPost || null);
@@ -162,12 +162,12 @@ export const PostDetail: React.FC<PostDetailProps> = ({ postId, onBack }) => {
 
             {/* Main Content */}
             {/* Main Content */}
-            <main className="max-w-5xl mx-auto px-6 py-20">
-                <div className="flex flex-col gap-24">
+            <main className="max-w-7xl mx-auto px-6 py-20">
+                <div className="flex flex-col items-center gap-24">
                     {/* Main Article */}
-                    <article className="w-full max-w-3xl mx-auto">
-                        <div className="prose prose-stone prose-lg max-w-none text-justify prose-headings:font-serif prose-headings:text-floral-deep prose-headings:text-left prose-p:text-stone-600 prose-p:leading-relaxed prose-p:font-light">
-                            <p className="text-xl md:text-2xl text-stone-500 font-serif italic mb-12 border-l-4 border-floral-rose pl-8 py-2 text-left">
+                    <article className="w-full max-w-2xl mx-auto">
+                        <div className="prose prose-stone prose-lg max-w-none prose-headings:font-serif prose-headings:text-floral-deep prose-headings:text-center prose-p:text-stone-600 prose-p:leading-relaxed prose-p:font-light">
+                            <p className="text-xl md:text-2xl text-stone-500 font-serif italic mb-12 border-l-4 border-floral-rose pl-8 py-2 text-left mx-auto max-w-xl">
                                 "{post.excerpt}"
                             </p>
 
@@ -185,7 +185,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ postId, onBack }) => {
 
                                     <p>Chúng tôi luôn nỗ lực để mỗi sản phẩm tạo ra là một tác phẩm nghệ thuật độc bản. Từ khâu tuyển chọn nguyên liệu tươi mới mỗi ngày từ các nhà vườn uy tín, đến khâu thiết kế tỉ mỉ bởi đôi bàn tay khéo léo của các nghệ nhân, mọi thứ đều được thực hiện với tình yêu và sự trân trọng tuyệt đối.</p>
 
-                                    <blockquote className="bg-floral-petal p-10 rounded-[2.5rem] border-l-8 border-floral-rose my-12 text-left">
+                                    <blockquote className="bg-floral-petal p-10 rounded-[2.5rem] border-l-8 border-floral-rose my-12 text-center">
                                         <p className="text-2xl font-serif text-floral-deep m-0">"Nghệ thuật không nằm ở sự phô trương, mà nằm ở những chi tiết nhỏ bé được thực hiện với sự tận tâm lớn lao."</p>
                                         <footer className="mt-4 font-bold text-floral-rose uppercase tracking-widest text-xs">— ChinChin Philosophy</footer>
                                     </blockquote>

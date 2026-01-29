@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, Plus, X, ShoppingBag, Star, Clock, Truck, Loader2, RefreshCcw, Info, Search } from 'lucide-react';
-import { ENDPOINTS } from '../constants';
+import { ENDPOINTS, STORAGE_KEYS } from '../constants';
 import { FileHandler } from './FileHandler';
 import { api } from '@/backend';
 import { useCart } from './CartContext';
@@ -103,7 +103,7 @@ export const ProductSection: React.FC = () => {
         setCategories([{ id: 'all', name: 'Tất cả' }, ...catsData]);
       }
     } catch (err) {
-      const localData = localStorage.getItem('chinchin_products');
+      const localData = localStorage.getItem(STORAGE_KEYS.PRODUCTS);
       setDisplayProducts(localData ? JSON.parse(localData) : INITIAL_PRODUCTS);
       setIsDemoMode(true);
     } finally {

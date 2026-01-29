@@ -70,6 +70,10 @@ export const STORAGE_KEYS = {
     TOKEN: 'chinchin_token',
     REFRESH_TOKEN: 'chinchin_refresh_token',
     USER: 'chinchin_user',
+    PRODUCTS: 'chinchin_products',
+    CATEGORIES: 'chinchin_categories',
+    POSTS: 'chinchin_posts',
+    CACHE_UPDATED: 'chinchin_cache_updated',
 };
 
 export const ABOUT_PREVIEW_CONTENT = {

@@ -130,19 +130,87 @@ const extractList = <T>(data: any): T[] => {
     return data.items || data.payload || data.data || [];
 };
 
+const CACHE_TTL = 7 * 24 * 60 * 60 * 1000; // 7 ngày tính bằng milliseconds
+
+// Helper: Kiểm tra và xóa cache nếu quá cũ
+export const checkCacheValidity = () => {
+    const lastUpdated = localStorage.getItem(STORAGE_KEYS.CACHE_UPDATED);
+    if (lastUpdated) {
+        const age = Date.now() - parseInt(lastUpdated);
+        if (age > CACHE_TTL) {
+            console.warn("Cache expired. Clearing old data.");
+            [STORAGE_KEYS.PRODUCTS, STORAGE_KEYS.CATEGORIES, STORAGE_KEYS.POSTS].forEach(key => {
+                localStorage.removeItem(key);
+            });
+            localStorage.removeItem(STORAGE_KEYS.CACHE_UPDATED);
+        }
+    }
+};
+
+// Helper: Cập nhật cache localstorage
+const updateCache = <T extends { id: string | number }>(key: string, action: 'add' | 'update' | 'delete', item?: T, id?: string | number) => {
+    const localData = localStorage.getItem(key);
+    if (!localData) return;
+
+    try {
+        let list = JSON.parse(localData);
+        if (!Array.isArray(list)) return;
+
+        if (action === 'add' && item) {
+            list.push(item);
+        } else if (action === 'update' && item) {
+            list = list.map((i: any) => String(i.id) === String(item.id) ? { ...i, ...item } : i);
+        } else if (action === 'delete' && id) {
+            list = list.filter((i: any) => String(i.id) !== String(id));
+        }
+
+        localStorage.setItem(key, JSON.stringify(list));
+        localStorage.setItem(STORAGE_KEYS.CACHE_UPDATED, Date.now().toString());
+        window.dispatchEvent(new Event('storage'));
+    } catch (e) {
+        console.warn("Failed to update cache", e);
+    }
+};
+
 export const api = {
     products: {
-        getAll: () => safeFetch<any>(ENDPOINTS.PRODUCTS.BASE).then(data => extractList<Product>(data)).catch(e => { throw e; }),
+        getAll: () => safeFetch<any>(ENDPOINTS.PRODUCTS.BASE).then(data => {
+            const list = extractList<Product>(data);
+            localStorage.setItem(STORAGE_KEYS.PRODUCTS, JSON.stringify(list));
+            localStorage.setItem(STORAGE_KEYS.CACHE_UPDATED, Date.now().toString());
+            return list;
+        }),
         getOne: (id: string | number) => safeFetch<Product>(ENDPOINTS.PRODUCTS.DETAIL(id)),
-        create: (data: Partial<Product>) => fetchWithAuth<Product>(ENDPOINTS.PRODUCTS.BASE, { method: 'POST', body: data }),
-        update: (id: string | number, data: Partial<Product>) => fetchWithAuth<Product>(ENDPOINTS.PRODUCTS.DETAIL(id), { method: 'PUT', body: data }),
-        delete: (id: string | number) => fetchWithAuth<void>(ENDPOINTS.PRODUCTS.DETAIL(id), { method: 'DELETE' }),
+        create: (data: Partial<Product>) => fetchWithAuth<Product>(ENDPOINTS.PRODUCTS.BASE, { method: 'POST', body: data }).then(res => {
+            updateCache(STORAGE_KEYS.PRODUCTS, 'add', res);
+            return res;
+        }),
+        update: (id: string | number, data: Partial<Product>) => fetchWithAuth<Product>(ENDPOINTS.PRODUCTS.DETAIL(id), { method: 'PUT', body: data }).then(res => {
+            updateCache(STORAGE_KEYS.PRODUCTS, 'update', res);
+            return res;
+        }),
+        delete: (id: string | number) => fetchWithAuth<void>(ENDPOINTS.PRODUCTS.DETAIL(id), { method: 'DELETE' }).then(() => {
+            updateCache(STORAGE_KEYS.PRODUCTS, 'delete', undefined, id);
+        }),
     },
     productCategories: {
-        getAll: () => safeFetch<any>(ENDPOINTS.PRODUCT_CATEGORIES.BASE).then(data => extractList<Category>(data)),
-        create: (data: Partial<Category>) => fetchWithAuth<Category>(ENDPOINTS.PRODUCT_CATEGORIES.BASE, { method: 'POST', body: data }),
-        update: (id: string | number, data: Partial<Category>) => fetchWithAuth<Category>(ENDPOINTS.PRODUCT_CATEGORIES.DETAIL(id), { method: 'PUT', body: data }),
-        delete: (id: string | number) => fetchWithAuth<void>(ENDPOINTS.PRODUCT_CATEGORIES.DETAIL(id), { method: 'DELETE' }),
+        getAll: () => safeFetch<any>(ENDPOINTS.PRODUCT_CATEGORIES.BASE).then(data => {
+            const list = extractList<Category>(data);
+            localStorage.setItem(STORAGE_KEYS.CATEGORIES, JSON.stringify(list));
+            localStorage.setItem(STORAGE_KEYS.CACHE_UPDATED, Date.now().toString());
+            return list;
+        }),
+        create: (data: Partial<Category>) => fetchWithAuth<Category>(ENDPOINTS.PRODUCT_CATEGORIES.BASE, { method: 'POST', body: data }).then(res => {
+            updateCache(STORAGE_KEYS.CATEGORIES, 'add', res);
+            return res;
+        }),
+        update: (id: string | number, data: Partial<Category>) => fetchWithAuth<Category>(ENDPOINTS.PRODUCT_CATEGORIES.DETAIL(id), { method: 'PUT', body: data }).then(res => {
+            updateCache(STORAGE_KEYS.CATEGORIES, 'update', res);
+            return res;
+        }),
+        delete: (id: string | number) => fetchWithAuth<void>(ENDPOINTS.PRODUCT_CATEGORIES.DETAIL(id), { method: 'DELETE' }).then(() => {
+            updateCache(STORAGE_KEYS.CATEGORIES, 'delete', undefined, id);
+        }),
     },
     postCategories: {
         getAll: () => safeFetch<any>(ENDPOINTS.POST_CATEGORIES.BASE).then(data => extractList<PostCategory>(data)),
@@ -151,11 +219,24 @@ export const api = {
         delete: (id: string | number) => fetchWithAuth<void>(ENDPOINTS.POST_CATEGORIES.DETAIL(id), { method: 'DELETE' }),
     },
     blog: {
-        getAll: () => safeFetch<any>(ENDPOINTS.POSTS.BASE).then(data => extractList<Post>(data)),
+        getAll: () => safeFetch<any>(ENDPOINTS.POSTS.BASE).then(data => {
+            const list = extractList<Post>(data);
+            localStorage.setItem(STORAGE_KEYS.POSTS, JSON.stringify(list));
+            localStorage.setItem(STORAGE_KEYS.CACHE_UPDATED, Date.now().toString());
+            return list;
+        }),
         getOne: (id: string | number) => safeFetch<Post>(ENDPOINTS.POSTS.DETAIL(id)),
-        create: (data: Partial<Post>) => fetchWithAuth<Post>(ENDPOINTS.POSTS.BASE, { method: 'POST', body: data }),
-        update: (id: string | number, data: Partial<Post>) => fetchWithAuth<Post>(ENDPOINTS.POSTS.DETAIL(id), { method: 'PUT', body: data }),
-        delete: (id: string | number) => fetchWithAuth<void>(ENDPOINTS.POSTS.DETAIL(id), { method: 'DELETE' }),
+        create: (data: Partial<Post>) => fetchWithAuth<Post>(ENDPOINTS.POSTS.BASE, { method: 'POST', body: data }).then(res => {
+            updateCache(STORAGE_KEYS.POSTS, 'add', res);
+            return res;
+        }),
+        update: (id: string | number, data: Partial<Post>) => fetchWithAuth<Post>(ENDPOINTS.POSTS.DETAIL(id), { method: 'PUT', body: data }).then(res => {
+            updateCache(STORAGE_KEYS.POSTS, 'update', res);
+            return res;
+        }),
+        delete: (id: string | number) => fetchWithAuth<void>(ENDPOINTS.POSTS.DETAIL(id), { method: 'DELETE' }).then(() => {
+            updateCache(STORAGE_KEYS.POSTS, 'delete', undefined, id);
+        }),
         rate: (id: string | number, rating: number) => fetchWithAuth<void>(ENDPOINTS.POSTS.RATE(id), { method: 'POST', body: { rating } }),
     },
     cart: {

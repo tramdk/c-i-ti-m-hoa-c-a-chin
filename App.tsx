@@ -15,6 +15,7 @@ import { CartView } from './pages/CartView';
 import { AuthProvider, useAuth } from './components/AuthContext';
 import { ToastProvider, useToast } from './components/ToastContext';
 import { UserProfile } from './types';
+import { checkCacheValidity } from './backend';
 
 const ScrollToTop = () => {
   const { pathname } = useLocation();
@@ -146,6 +147,11 @@ const AppContent: React.FC = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  // Auto-clean stale cache
+  useEffect(() => {
+    checkCacheValidity();
+  }, []);
 
   // Listen for login prompt requests
   useEffect(() => {
