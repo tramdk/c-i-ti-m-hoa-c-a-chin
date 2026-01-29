@@ -166,7 +166,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ postId, onBack }) => {
                 <div className="flex flex-col items-center gap-24">
                     {/* Main Article */}
                     <article className="w-full max-w-2xl mx-auto">
-                        <div className="prose prose-stone prose-lg max-w-none prose-headings:font-serif prose-headings:text-floral-deep prose-headings:text-center prose-p:text-stone-600 prose-p:leading-relaxed prose-p:font-light">
+                        <div className="prose prose-stone prose-lg max-w-none prose-headings:font-serif prose-headings:text-floral-deep prose-headings:text-center prose-p:text-stone-600 prose-p:leading-relaxed prose-p:font-light prose-img:mx-auto prose-img:rounded-3xl prose-img:shadow-lg prose-figure:mx-auto prose-video:mx-auto [&_iframe]:mx-auto [&_table]:mx-auto">
                             <p className="text-xl md:text-2xl text-stone-500 font-serif italic mb-12 border-l-4 border-floral-rose pl-8 py-2 text-left mx-auto max-w-xl">
                                 "{post.excerpt}"
                             </p>
@@ -203,7 +203,7 @@ export const PostDetail: React.FC<PostDetailProps> = ({ postId, onBack }) => {
                                     )}
                                 </div>
                             ) : (
-                                <div dangerouslySetInnerHTML={{ __html: post.content }} />
+                                <div className="w-full [&>*]:mx-auto" dangerouslySetInnerHTML={{ __html: post.content }} />
                             )}
                         </div>
 
