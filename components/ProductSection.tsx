@@ -1,11 +1,15 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Plus, X, ShoppingBag, Star, Clock, Truck, Loader2, RefreshCcw, Info, Search } from 'lucide-react';
+import { Heart, Plus, X, ShoppingBag, Star, Clock, Truck, Loader2, RefreshCcw, Info, Search, Eye, Box } from 'lucide-react';
 import { ENDPOINTS, STORAGE_KEYS } from '../constants';
 import { FileHandler } from './FileHandler';
 import { api } from '@/backend';
 import { useCart } from './CartContext';
+import { CartFlyingAnimation } from './CartFlyingAnimation';
+import { SimpleFlower } from './SimpleFlower';
+import { Product3DViewer } from './Product3DViewer';
+import { VirtualPreview } from './VirtualPreview';
 
 import { Product, Category } from '../types';
 
@@ -85,7 +89,14 @@ export const ProductSection: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [isDemoMode, setIsDemoMode] = useState<boolean>(false);
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [flyingObject, setFlyingObject] = useState<string | null>(null);
+  const [flyingObject, setFlyingObject] = useState<{ image: string; color: string } | null>(null);
+
+  // New 3D feature states
+  const [show3DViewer, setShow3DViewer] = useState(false);
+  const [viewerProduct, setViewerProduct] = useState<Product | null>(null);
+  const [showVirtualPreview, setShowVirtualPreview] = useState(false);
+  const [previewProduct, setPreviewProduct] = useState<Product | null>(null);
+  const [hoveredProduct, setHoveredProduct] = useState<number | string | null>(null);
 
   const { addToCart } = useCart();
 
@@ -122,11 +133,28 @@ export const ProductSection: React.FC = () => {
       return;
     }
 
+    // Trigger animation immediately for better UX
+    console.log('🌸 Triggering flying animation');
+    setFlyingObject({ image: product.image, color: '#D88C9A' });
+
     const success = await addToCart(product);
     if (success) {
-      setFlyingObject(product.image);
+      console.log('✅ Successfully added to cart');
       setSelectedProduct(null);
+    } else {
+      console.log('❌ Failed to add to cart');
+      // Animation already triggered, so user still sees feedback
     }
+  };
+
+  const handle3DView = (product: Product) => {
+    setViewerProduct(product);
+    setShow3DViewer(true);
+  };
+
+  const handleVirtualPreview = (product: Product) => {
+    setPreviewProduct(product);
+    setShowVirtualPreview(true);
   };
 
   const filteredProducts = displayProducts.filter(p => {
@@ -138,15 +166,41 @@ export const ProductSection: React.FC = () => {
 
   return (
     <div className="container mx-auto px-6">
+      {/* Enhanced 3D Cart Animation */}
       <AnimatePresence>
         {flyingObject && (
-          <FlyingItem
-            image={flyingObject}
+          <CartFlyingAnimation
+            image={flyingObject.image}
             targetId="cart-icon"
             onComplete={() => setFlyingObject(null)}
+            productColor={flyingObject.color}
           />
         )}
       </AnimatePresence>
+
+
+
+      {/* 3D Product Viewer */}
+      {viewerProduct && (
+        <Product3DViewer
+          imageUrl={viewerProduct.image}
+          productName={viewerProduct.name}
+          isOpen={show3DViewer}
+          onClose={() => setShow3DViewer(false)}
+        />
+      )}
+
+
+
+      {/* Virtual Preview */}
+      {previewProduct && (
+        <VirtualPreview
+          productImage={previewProduct.image}
+          productName={previewProduct.name}
+          isOpen={showVirtualPreview}
+          onClose={() => setShowVirtualPreview(false)}
+        />
+      )}
 
       <div className="flex flex-col md:flex-row justify-between items-end mb-16 gap-8">
         <div className="relative">
@@ -163,6 +217,8 @@ export const ProductSection: React.FC = () => {
               <RefreshCcw size={20} />
             </motion.button>
           </div>
+
+
         </div>
 
         <div className="flex flex-col gap-6 w-full md:w-auto">
@@ -224,7 +280,11 @@ export const ProductSection: React.FC = () => {
                 onClick={() => setSelectedProduct(product)}
               >
                 {/* Image Container with sophisticated hover */}
-                <div className="relative aspect-[4/5] w-full overflow-hidden bg-stone-50 md:mb-6 shadow-sm group-hover:shadow-[0_30px_60px_-15px_rgba(216,140,154,0.25)] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] rounded-[2rem] md:rounded-[1.5rem]">
+                <div
+                  className="relative aspect-[4/5] w-full overflow-hidden bg-stone-50 md:mb-6 shadow-sm group-hover:shadow-[0_30px_60px_-15px_rgba(216,140,154,0.25)] transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] rounded-[2rem] md:rounded-[1.5rem]"
+                  onMouseEnter={() => setHoveredProduct(product.id)}
+                  onMouseLeave={() => setHoveredProduct(null)}
+                >
 
                   {/* Image itself */}
                   <div className="w-full h-full overflow-hidden">
@@ -237,11 +297,45 @@ export const ProductSection: React.FC = () => {
                     />
                   </div>
 
+                  {/* Simple 8-Petal Flower Animation */}
+                  {hoveredProduct === product.id && (
+                    <SimpleFlower isVisible={true} color="#FF6B9D" />
+                  )}
+
                   {/* Gradient Overlay */}
                   <div className="absolute inset-0 bg-gradient-to-t from-floral-deep/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
 
-                  {/* Quick Action: Wishlist (Top Right) */}
-                  <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                  {/* Quick Actions (Top Right) */}
+                  <div className="absolute top-4 right-4 md:top-6 md:right-6 z-20 flex flex-col gap-2 translate-y-2 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-500 delay-100">
+                    {/* 3D Viewer */}
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handle3DView(product);
+                      }}
+                      className="w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-stone-400 hover:text-floral-rose transition-all shadow-lg group/btn"
+                      title="Xem 3D"
+                    >
+                      <Box size={20} className="transition-transform group-hover/btn:rotate-12" />
+                    </motion.button>
+
+                    {/* Virtual Preview */}
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleVirtualPreview(product);
+                      }}
+                      className="w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-stone-400 hover:text-floral-rose transition-all shadow-lg"
+                      title="Xem trong không gian"
+                    >
+                      <Eye size={20} />
+                    </motion.button>
+
+                    {/* Wishlist */}
                     <motion.button
                       whileHover={{ scale: 1.1 }}
                       whileTap={{ scale: 0.9 }}
@@ -250,6 +344,7 @@ export const ProductSection: React.FC = () => {
                         // Handle wishlist logic if any
                       }}
                       className="w-10 h-10 md:w-12 md:h-12 bg-white/90 backdrop-blur-md rounded-full flex items-center justify-center text-stone-400 hover:text-floral-rose transition-all shadow-lg"
+                      title="Yêu thích"
                     >
                       <Heart size={20} className="transition-transform active:scale-125" />
                     </motion.button>

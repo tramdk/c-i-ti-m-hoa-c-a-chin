@@ -203,7 +203,28 @@ export const PostDetail: React.FC<PostDetailProps> = ({ postId, onBack }) => {
                                     )}
                                 </div>
                             ) : (
-                                <div className="w-full [&>*]:mx-auto" dangerouslySetInnerHTML={{ __html: post.content }} />
+                                <div
+                                    style={{ overflowWrap: 'break-word', wordWrap: 'break-word' }}
+                                    className="w-full max-w-full space-y-6 
+                                    [&>p]:text-stone-600 [&>p]:leading-relaxed [&>p]:mb-6 [&>p]:text-lg [&>p]:break-words [&>p]:text-justify
+                                    [&>h1]:font-serif [&>h1]:text-4xl [&>h1]:text-floral-deep [&>h1]:mt-12 [&>h1]:mb-6 [&>h1]:font-bold
+                                    [&>h2]:font-serif [&>h2]:text-3xl [&>h2]:text-floral-deep [&>h2]:mt-10 [&>h2]:mb-5 [&>h2]:font-semibold
+                                    [&>h3]:font-serif [&>h3]:text-2xl [&>h3]:text-floral-rose [&>h3]:mt-8 [&>h3]:mb-4
+                                    [&>h4]:font-sans [&>h4]:text-xl [&>h4]:text-floral-deep [&>h4]:mt-6 [&>h4]:mb-3 [&>h4]:font-medium
+                                    [&>ul]:list-disc [&>ul]:ml-8 [&>ul]:mb-6 [&>ul]:space-y-2
+                                    [&>ol]:list-decimal [&>ol]:ml-8 [&>ol]:mb-6 [&>ol]:space-y-2
+                                    [&>li]:text-stone-600 [&>li]:leading-relaxed
+                                    [&>blockquote]:border-l-4 [&>blockquote]:border-floral-rose [&>blockquote]:pl-6 [&>blockquote]:py-4 [&>blockquote]:my-8 [&>blockquote]:bg-floral-petal [&>blockquote]:rounded-r-2xl [&>blockquote]:italic [&>blockquote]:text-floral-deep
+                                    [&>strong]:text-floral-deep [&>strong]:font-bold
+                                    [&>em]:text-floral-rose [&>em]:italic
+                                    [&>a]:text-floral-rose [&>a]:underline [&>a]:hover:text-floral-deep
+                                    [&>img]:rounded-3xl [&>img]:shadow-lg [&>img]:my-8 [&>img]:mx-auto
+                                    [&>hr]:border-stone-200 [&>hr]:my-12
+                                    [&>code]:bg-stone-100 [&>code]:px-2 [&>code]:py-1 [&>code]:rounded [&>code]:text-sm [&>code]:text-floral-deep
+                                    [&>pre]:bg-stone-900 [&>pre]:text-white [&>pre]:p-6 [&>pre]:rounded-2xl [&>pre]:overflow-x-auto [&>pre]:my-6
+                                    "
+                                    dangerouslySetInnerHTML={{ __html: post.content }}
+                                />
                             )}
                         </div>
 
