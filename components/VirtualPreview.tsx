@@ -1,7 +1,6 @@
-
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, Suspense } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { PerspectiveCamera, Environment, useTexture } from '@react-three/drei';
+import { PerspectiveCamera } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Briefcase, Coffee, X, Check } from 'lucide-react';
@@ -51,8 +50,18 @@ interface BouquetPreviewProps {
 const BouquetPreview: React.FC<BouquetPreviewProps> = ({ imageUrl, position, scale }) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const [hovered, setHovered] = useState(false);
+    const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
-    const texture = useTexture(imageUrl);
+    React.useEffect(() => {
+        if (!imageUrl) return;
+        const loader = new THREE.TextureLoader();
+        loader.load(
+            imageUrl,
+            (tex) => setTexture(tex),
+            undefined,
+            (err) => console.warn('Failed to load texture for BouquetPreview:', err)
+        );
+    }, [imageUrl]);
 
     useFrame((state) => {
         if (meshRef.current) {
@@ -76,7 +85,8 @@ const BouquetPreview: React.FC<BouquetPreviewProps> = ({ imageUrl, position, sca
             >
                 <cylinderGeometry args={[0.3, 0.25, 0.8, 32]} />
                 <meshStandardMaterial
-                    map={texture}
+                    color={texture ? '#ffffff' : '#D88C9A'}
+                    map={texture || undefined}
                     roughness={0.3}
                     metalness={0.1}
                 />
@@ -234,27 +244,27 @@ export const VirtualPreview: React.FC<VirtualPreviewProps> = ({
 
                         {/* 3D Canvas */}
                         <Canvas shadows>
-                            <PerspectiveCamera makeDefault position={[2, 1.5, 4]} fov={60} />
+                            <Suspense fallback={null}>
+                                <PerspectiveCamera makeDefault position={[2, 1.5, 4]} fov={60} />
 
-                            <ambientLight intensity={0.6} />
-                            <directionalLight
-                                position={[5, 5, 5]}
-                                intensity={0.8}
-                                castShadow
-                                shadow-mapSize-width={2048}
-                                shadow-mapSize-height={2048}
-                            />
-                            <pointLight position={[-3, 2, -2]} intensity={0.4} color="#FFE4B5" />
-
-                            <RoomEnvironment scene={selectedScene}>
-                                <BouquetPreview
-                                    imageUrl={productImage}
-                                    position={bouquetPosition}
-                                    scale={bouquetScale}
+                                <ambientLight intensity={0.6} />
+                                <directionalLight
+                                    position={[5, 5, 5]}
+                                    intensity={0.8}
+                                    castShadow
+                                    shadow-mapSize-width={2048}
+                                    shadow-mapSize-height={2048}
                                 />
-                            </RoomEnvironment>
+                                <pointLight position={[-3, 2, -2]} intensity={0.4} color="#FFE4B5" />
 
-                            <Environment preset="apartment" />
+                                <RoomEnvironment scene={selectedScene}>
+                                    <BouquetPreview
+                                        imageUrl={productImage}
+                                        position={bouquetPosition}
+                                        scale={bouquetScale}
+                                    />
+                                </RoomEnvironment>
+                            </Suspense>
                         </Canvas>
 
                         {/* Scene Selector */}

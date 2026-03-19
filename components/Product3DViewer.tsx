@@ -1,24 +1,32 @@
-
-import React, { useRef, useState } from 'react';
-import { Canvas, useFrame, useThree } from '@react-three/fiber';
-import { OrbitControls, PerspectiveCamera, Environment, ContactShadows, useTexture } from '@react-three/drei';
+import React, { useRef, useState, Suspense } from 'react';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { OrbitControls, PerspectiveCamera, ContactShadows } from '@react-three/drei';
 import * as THREE from 'three';
 import { motion, AnimatePresence } from 'framer-motion';
-import { RotateCcw, ZoomIn, ZoomOut, Move, X } from 'lucide-react';
+import { ZoomIn, ZoomOut, X } from 'lucide-react';
 
 interface Product3DModelProps {
     imageUrl: string;
     productName: string;
 }
 
-const Product3DModel: React.FC<Product3DModelProps> = ({ imageUrl, productName }) => {
+const Product3DModel: React.FC<Product3DModelProps> = ({ imageUrl }) => {
     const meshRef = useRef<THREE.Mesh>(null);
     const [hovered, setHovered] = useState(false);
+    const [texture, setTexture] = useState<THREE.Texture | null>(null);
 
-    // Load texture
-    const texture = useTexture(imageUrl);
+    React.useEffect(() => {
+        if (!imageUrl) return;
+        const loader = new THREE.TextureLoader();
+        loader.load(
+            imageUrl,
+            (tex) => setTexture(tex),
+            undefined,
+            (err) => console.warn('Failed to load texture for Product3DModel:', err)
+        );
+    }, [imageUrl]);
 
-    useFrame((state) => {
+    useFrame(() => {
         if (meshRef.current && !hovered) {
             // Auto-rotate when not being controlled
             meshRef.current.rotation.y += 0.005;
@@ -26,30 +34,28 @@ const Product3DModel: React.FC<Product3DModelProps> = ({ imageUrl, productName }
     });
 
     return (
-        <group>
-            {/* Main product display - using a cylinder to simulate a bouquet */}
-            <mesh
-                ref={meshRef}
-                onPointerOver={() => setHovered(true)}
-                onPointerOut={() => setHovered(false)}
-                castShadow
-            >
-                <cylinderGeometry args={[1, 0.8, 3, 32]} />
+        <group
+            onPointerOver={() => setHovered(true)}
+            onPointerOut={() => setHovered(false)}
+        >
+            <mesh ref={meshRef} castShadow>
+                <cylinderGeometry args={[1, 0.8, 2, 32]} />
                 <meshStandardMaterial
-                    map={texture}
+                    color={texture ? '#ffffff' : '#D88C9A'}
+                    map={texture || undefined}
                     roughness={0.3}
                     metalness={0.1}
                 />
             </mesh>
 
             {/* Decorative elements */}
-            <mesh position={[0, -1.5, 0]} rotation={[0, 0, 0]}>
+            <mesh position={[0, -1.5, 0]}>
                 <cylinderGeometry args={[0.85, 0.9, 0.3, 32]} />
                 <meshStandardMaterial color="#8B4513" roughness={0.8} />
             </mesh>
 
             {/* Ribbon */}
-            <mesh position={[0, -1.2, 0]} rotation={[0, 0, 0]}>
+            <mesh position={[0, -1.2, 0]}>
                 <torusGeometry args={[0.95, 0.08, 16, 32]} />
                 <meshStandardMaterial color="#D88C9A" roughness={0.2} metalness={0.6} />
             </mesh>
@@ -132,40 +138,40 @@ export const Product3DViewer: React.FC<Product3DViewerProps> = ({
 
                         {/* 3D Canvas */}
                         <Canvas shadows>
-                            <PerspectiveCamera makeDefault position={[0, 1, 8]} fov={50} />
+                            <Suspense fallback={null}>
+                                <PerspectiveCamera makeDefault position={[0, 1, 8]} fov={50} />
 
-                            <ambientLight intensity={0.5} />
-                            <spotLight
-                                position={[10, 10, 10]}
-                                angle={0.3}
-                                penumbra={1}
-                                intensity={1.5}
-                                castShadow
-                            />
-                            <pointLight position={[-10, -10, -10]} intensity={0.5} color="#D88C9A" />
+                                <ambientLight intensity={0.5} />
+                                <spotLight
+                                    position={[10, 10, 10]}
+                                    angle={0.3}
+                                    penumbra={1}
+                                    intensity={1.5}
+                                    castShadow
+                                />
+                                <pointLight position={[-10, -10, -10]} intensity={0.5} color="#D88C9A" />
 
-                            <Product3DModel imageUrl={imageUrl} productName={productName} />
+                                <Product3DModel imageUrl={imageUrl} productName={productName} />
 
-                            <ContactShadows
-                                position={[0, -1.8, 0]}
-                                opacity={0.4}
-                                scale={10}
-                                blur={2}
-                                far={4}
-                            />
+                                <ContactShadows
+                                    position={[0, -1.8, 0]}
+                                    opacity={0.4}
+                                    scale={10}
+                                    blur={2}
+                                    far={4}
+                                />
 
-                            <Environment preset="sunset" />
-
-                            <OrbitControls
-                                ref={controlsRef}
-                                enablePan={true}
-                                enableZoom={true}
-                                enableRotate={true}
-                                minDistance={3}
-                                maxDistance={15}
-                                minPolarAngle={Math.PI / 6}
-                                maxPolarAngle={Math.PI / 2}
-                            />
+                                <OrbitControls
+                                    ref={controlsRef}
+                                    enablePan={true}
+                                    enableZoom={true}
+                                    enableRotate={true}
+                                    minDistance={3}
+                                    maxDistance={15}
+                                    minPolarAngle={Math.PI / 6}
+                                    maxPolarAngle={Math.PI / 2}
+                                />
+                            </Suspense>
                         </Canvas>
 
                         {/* Controls */}
@@ -179,7 +185,7 @@ export const Product3DViewer: React.FC<Product3DViewerProps> = ({
                             >
                                 <ZoomIn size={18} />
                             </motion.button>
-
+                            <div className="w-px h-6 bg-stone-200" />
                             <motion.button
                                 whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
@@ -189,35 +195,15 @@ export const Product3DViewer: React.FC<Product3DViewerProps> = ({
                             >
                                 <ZoomOut size={18} />
                             </motion.button>
-
                             <div className="w-px h-6 bg-stone-200" />
-
                             <motion.button
-                                whileHover={{ scale: 1.1, rotate: 180 }}
+                                whileHover={{ scale: 1.1 }}
                                 whileTap={{ scale: 0.9 }}
                                 onClick={handleReset}
-                                className="w-10 h-10 bg-stone-100 hover:bg-floral-rose hover:text-white rounded-full flex items-center justify-center transition-colors"
-                                title="Reset View"
+                                className="px-4 py-2 bg-stone-100 hover:bg-floral-rose hover:text-white rounded-full text-sm font-bold transition-colors uppercase tracking-widest text-stone-600 hover:text-white"
                             >
-                                <RotateCcw size={18} />
+                                Đặt lại
                             </motion.button>
-
-                            <div className="px-4 py-2 bg-stone-100 rounded-full">
-                                <div className="flex items-center gap-2 text-xs text-stone-600">
-                                    <Move size={14} />
-                                    <span className="font-medium">Kéo để xoay</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Info Badge */}
-                        <div className="absolute top-24 right-6 z-10 bg-white/90 backdrop-blur-md rounded-2xl p-4 shadow-lg max-w-xs">
-                            <h4 className="font-bold text-sm text-floral-deep mb-2">💡 Hướng dẫn</h4>
-                            <ul className="text-xs text-stone-600 space-y-1">
-                                <li>• <strong>Xoay:</strong> Click và kéo</li>
-                                <li>• <strong>Zoom:</strong> Cuộn chuột hoặc dùng nút</li>
-                                <li>• <strong>Di chuyển:</strong> Click chuột phải và kéo</li>
-                            </ul>
                         </div>
                     </motion.div>
                 </div>

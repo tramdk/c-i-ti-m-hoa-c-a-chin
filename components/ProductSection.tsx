@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, Plus, X, ShoppingBag, Star, Clock, Truck, Loader2, RefreshCcw, Info, Search, Eye, Box } from 'lucide-react';
+import { Heart, Plus, X, ShoppingBag, Star, Clock, Truck, Loader2, RefreshCcw, Info, Search, Eye, Box, Maximize2 } from 'lucide-react';
 import { ENDPOINTS, STORAGE_KEYS } from '../constants';
 import { FileHandler } from './FileHandler';
 import { api } from '@/backend';
@@ -10,6 +10,7 @@ import { CartFlyingAnimation } from './CartFlyingAnimation';
 import { SimpleFlower } from './SimpleFlower';
 import { Product3DViewer } from './Product3DViewer';
 import { VirtualPreview } from './VirtualPreview';
+import { Interactive3DProductCard } from './Interactive3DProductCard';
 
 import { Product, Category } from '../types';
 
@@ -96,6 +97,8 @@ export const ProductSection: React.FC = () => {
   const [viewerProduct, setViewerProduct] = useState<Product | null>(null);
   const [showVirtualPreview, setShowVirtualPreview] = useState(false);
   const [previewProduct, setPreviewProduct] = useState<Product | null>(null);
+  const [showInteractive3D, setShowInteractive3D] = useState(false);
+  const [interactiveProduct, setInteractiveProduct] = useState<Product | null>(null);
   const [hoveredProduct, setHoveredProduct] = useState<number | string | null>(null);
 
   const { addToCart } = useCart();
@@ -157,6 +160,11 @@ export const ProductSection: React.FC = () => {
     setShowVirtualPreview(true);
   };
 
+  const handleInteractive3D = (product: Product) => {
+    setInteractiveProduct(product);
+    setShowInteractive3D(true);
+  };
+
   const filteredProducts = displayProducts.filter(p => {
     const matchesCategory = filter === 'all' || String(p.categoryId) === String(filter);
     const matchesSearch = p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -199,6 +207,16 @@ export const ProductSection: React.FC = () => {
           productName={previewProduct.name}
           isOpen={showVirtualPreview}
           onClose={() => setShowVirtualPreview(false)}
+        />
+      )}
+
+      {/* Interactive 3D Card (Premium) */}
+      {interactiveProduct && (
+        <Interactive3DProductCard
+          product={interactiveProduct}
+          isOpen={showInteractive3D}
+          onClose={() => setShowInteractive3D(false)}
+          onAddToCart={handleAddToCart}
         />
       )}
 
@@ -319,6 +337,20 @@ export const ProductSection: React.FC = () => {
                       title="Xem 3D"
                     >
                       <Box size={20} className="transition-transform group-hover/btn:rotate-12" />
+                    </motion.button>
+
+                    {/* Interactive 3D Detail */}
+                    <motion.button
+                      whileHover={{ scale: 1.1 }}
+                      whileTap={{ scale: 0.9 }}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleInteractive3D(product);
+                      }}
+                      className="w-10 h-10 md:w-12 md:h-12 bg-floral-rose text-white rounded-full flex items-center justify-center transition-all shadow-lg group/btn"
+                      title="Chi tiết 3D xịn xò"
+                    >
+                      <Maximize2 size={20} className="animate-pulse" />
                     </motion.button>
 
                     {/* Virtual Preview */}
@@ -511,6 +543,36 @@ export const ProductSection: React.FC = () => {
           </div>
         )}
       </AnimatePresence>
+      
+      {/* 3D Viewer */}
+      {viewerProduct && (
+        <Product3DViewer 
+          isOpen={show3DViewer} 
+          onClose={() => setShow3DViewer(false)} 
+          imageUrl={viewerProduct.image}
+          productName={viewerProduct.name}
+        />
+      )}
+
+      {/* Virtual Preview */}
+      {previewProduct && (
+        <VirtualPreview
+          isOpen={showVirtualPreview}
+          onClose={() => setShowVirtualPreview(false)}
+          productImage={previewProduct.image}
+          productName={previewProduct.name}
+        />
+      )}
+
+      {/* Interactive 3D Card (Premium) */}
+      {interactiveProduct && (
+        <Interactive3DProductCard
+          product={interactiveProduct}
+          isOpen={showInteractive3D}
+          onClose={() => setShowInteractive3D(false)}
+          onAddToCart={handleAddToCart}
+        />
+      )}
     </div>
   );
 };

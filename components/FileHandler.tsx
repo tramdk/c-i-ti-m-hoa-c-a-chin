@@ -74,6 +74,7 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
     const [selectedImage, setSelectedImage] = useState<string | null>(null);
     const [previewFile, setPreviewFile] = useState<FileData | null>(null);
     const [confirmDelete, setConfirmDelete] = useState<string | number | null>(null);
+    const [imageError, setImageError] = useState(false);
 
     // --- Upload State ---
     const [isDragging, setIsDragging] = useState(false);
@@ -349,7 +350,7 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
         const isSmall = className.includes('w-12') || className.includes('h-12');
 
         if (imageFiles.length === 0) {
-            if (fallbackImage) {
+            if (fallbackImage && !imageError) {
                 return (
                     <div className={`relative group overflow-hidden bg-floral-rose/5 pointer-events-none ${(!className.includes('aspect-') && !className.includes('h-')) ? 'aspect-video' : ''} ${!className.includes('rounded-') ? 'rounded-[2.5rem]' : ''} ${className}`}>
                         <motion.img
@@ -358,6 +359,7 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             className="w-full h-full object-cover"
+                            onError={() => setImageError(true)}
                         />
                     </div>
                 );
@@ -382,7 +384,16 @@ export const FileHandler: React.FC<FileHandlerProps> = ({
                         exit={{ opacity: 0, scale: 0.95 }}
                         transition={{ duration: 1.5, ease: "easeInOut" }}
                         className="w-full h-full object-cover"
+                        onError={(e) => {
+                           (e.target as HTMLImageElement).style.display = 'none';
+                           setImageError(true);
+                        }}
                     />
+                    {imageError && (
+                        <div className="absolute inset-0 flex items-center justify-center text-stone-200">
+                           <ImageIcon size={isSmall ? 20 : 48} />
+                        </div>
+                    )}
                 </AnimatePresence>
             </div>
         );
