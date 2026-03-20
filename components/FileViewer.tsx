@@ -8,7 +8,7 @@ import { ConfirmModal } from './ConfirmModal';
 interface FileViewerProps {
     objectId: string | number;
     objectType: 'product' | 'post' | 'user' | 'review';
-    refreshTrigger?: any;
+    refreshTrigger?: number | string | boolean;
     onDeleteSuccess?: (fileId: string | number) => void;
     className?: string;
     allowDelete?: boolean;
@@ -76,7 +76,7 @@ export const FileViewer: React.FC<FileViewerProps> = ({
     const imageFiles = files.filter(f => isImageFile(f));
 
     useEffect(() => {
-        let timer: any;
+        let timer: ReturnType<typeof setInterval>;
         if (viewOnly && imageFiles.length > 1) {
             timer = setInterval(() => {
                 setCurrentImageIndex(prev => (prev + 1) % imageFiles.length);

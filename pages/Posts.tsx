@@ -95,13 +95,21 @@ export const Posts: React.FC<PostsProps> = ({ onSelectPost }) => {
                 setCategories(fetchedCategories);
 
                 // Fetch posts
-                const postData = await api.blog.getAll();
+                interface PostDto {
+                    id: number | string;
+                    title: string;
+                    categoryId?: string;
+                    authorName?: string;
+                    createdAt?: string | Date;
+                    averageRating?: number;
+                }
+                const postData = await api.blog.getAll() as { items?: PostDto[] } | PostDto[];
                 // PostDto: (Guid Id, string Title, string AuthorName, double AverageRating, DateTime CreatedAt, string? CategoryId)
                 const posts = Array.isArray(postData) ? postData : (postData.items || []);
 
                 if (posts.length > 0) {
-                    const mappedPosts: Post[] = posts.map((p: any) => {
-                        const cat = fetchedCategories.find((c: any) => c.id === p.categoryId);
+                    const mappedPosts: Post[] = posts.map((p: PostDto) => {
+                        const cat = fetchedCategories.find((c: PostCategory) => c.id === p.categoryId);
                         return {
                             id: p.id,
                             title: p.title,
