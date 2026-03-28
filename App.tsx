@@ -183,7 +183,7 @@ const AppContent: React.FC = () => {
       if (response.ok) {
         const data = await response.json();
         const userProfile: UserProfile = {
-          name: data.user?.fullName || (email === 'admin@chinchin.com' ? 'Admin ChinChin' : 'Thành viên'),
+          name: data.user?.fullName || 'Thành viên',
           email: data.user.email,
           role: data.user?.roles.length ? data.user?.roles[0]?.toLowerCase() : 'user'
         };
@@ -201,21 +201,8 @@ const AppContent: React.FC = () => {
           navigate('/cart');
         }
       } else {
-        if (email === 'admin@chinchin.com' && password === 'admin') {
-          const demoUser: UserProfile = { name: 'Admin Demo', email: email, role: 'admin' };
-
-          login('demo-token', null, demoUser);
-
-          setAuthModalOpen(false);
-          addToast('Đăng nhập thành công với tài khoản Demo!', 'success');
-          if (pendingCartAction) {
-            setPendingCartAction(false);
-            navigate('/cart');
-          }
-        } else {
-          setAuthError('Email hoặc mật khẩu không chính xác');
-          addToast('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.', 'error');
-        }
+        setAuthError('Email hoặc mật khẩu không chính xác');
+        addToast('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.', 'error');
       }
     } catch (err) {
       setAuthError('Không thể kết nối đến máy chủ');

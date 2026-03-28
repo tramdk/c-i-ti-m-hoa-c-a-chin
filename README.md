@@ -509,11 +509,8 @@ npm install --force
 Tạo file `.env.local` trong thư mục gốc:
 
 ```env
-# Google Generative AI (Optional)
-GEMINI_API_KEY=your_api_key_here
-
-# API Endpoints (Optional)
-VITE_API_URL=http://localhost:5000/api
+# API Endpoints (Required)
+VITE_API_URL=http://localhost:8080
 ```
 
 ### Bước 4: Chạy development server
@@ -560,9 +557,8 @@ Build output sẽ được tạo trong thư mục `dist/`.
 
 #### 1. Đăng nhập
 1. Click vào nút **"ĐĂNG NHẬP"** trên thanh navigation
-2. Nhập email: `admin@chinchin.com`
-3. Nhập mật khẩu bất kỳ (demo mode)
-4. Click **"TIẾP TỤC"**
+2. Nhập email và mật khẩu tài khoản quản trị
+3. Click **"TIẾP TỤC"**
 
 #### 2. Quản lý sản phẩm
 1. Sau khi đăng nhập, click vào nút **"QUẢN LÝ"**
@@ -619,10 +615,6 @@ export default defineConfig(({ mode }) => {
       host: '0.0.0.0',         // Allow network access
     },
     plugins: [react()],        // React plugin with Fast Refresh
-    define: {
-      'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
-    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),  // Path alias
@@ -872,7 +864,6 @@ netlify deploy --prod
 
 Nhớ set environment variables trên hosting platform:
 ```
-GEMINI_API_KEY=your_api_key
 VITE_API_URL=your_backend_url
 ```
 

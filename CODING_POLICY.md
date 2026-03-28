@@ -62,7 +62,25 @@ Trước khi nói "Tôi đã xong", **bắt buộc** tự kiểm tra:
 - [ ] Không có cảnh báo lỗi TypeScript (đỏ file) hoặc lỗi React warning (VD: `missing key in map`) trong Console trình duyệt.
 - [ ] Chạy lệnh build (`npm run build`) không bị lỗi.
 - [ ] Xóa bỏ toàn bộ `console.log`, `debugger`, và các đoạn code bị comment tạm.
+- [ ] **QUAN TRỌNG:** Kiểm tra không có API Key, Mật khẩu, hoặc Token bị viết cứng (hardcoded) trong code.
+- [ ] Chạy lệnh quét bí mật nhanh: `git diff --cached | grep -Ei "api_key|secret|password|token"` (nếu có kết quả, hãy kiểm tra kỹ).
+
+---
+
+## 5. 🔐 BẢO MẬT & QUẢN LÝ BÍ MẬT (SECURITY & SECRETS)
+
+### 5.1 Tuyệt đối KHÔNG Hardcode Bí mật
+- **API Keys, Mật khẩu, Tokens, Private Keys:** Phải được lưu trong file `.env.local` (đã bị ignore bởi Git) hoặc cấu hình Environment Variables trên Server.
+- Không bao giờ đẩy (commit) các file `.env`, `.pem`, `.json` chứa thông tin nhạy cảm lên repository.
+
+### 5.2 Quản lý biến môi trường trong Vite
+- Chỉ những biến bắt đầu bằng `VITE_` mới được truy cập ở Frontend (nhưng vẫn có thể bị lộ nếu ai đó xem mã nguồn).
+- **Quy tắc vàng:** Các Key bí mật (như Gemini API Key, Stripe Secret, Database URL) **KHÔNG ĐƯỢC** đưa vào code Frontend. Mọi xử lý nhạy cảm phải thông qua Backend.
+
+### 5.3 Kiểm tra rò rỉ trước khi commit
+- Luôn chạy `git status` và `git diff --cached` để rà soát lại các dòng code vừa thay đổi.
+- Nếu lỡ commit secret, phải dùng `git filter-repo` hoặc `BFG Repo-Cleaner` để xóa triệt để khỏi lịch sử Git (đổi secret ngay lập tức!).
 
 ---
 **Cam kết:** 
-> _"Tôi sẽ luôn dọn dẹp phần rác mình sinh ra và nâng niu những dòng code cũ như chính code mới của mình."_
+> _"Tôi sẽ luôn dọn dẹp phần rác mình sinh ra, bảo vệ bí mật dự án và nâng niu những dòng code cũ như chính code mới của mình."_
